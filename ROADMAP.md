@@ -40,13 +40,13 @@ Establish the engineering substrate required by the pre-commit checklist before 
 
 ## Phase 1 — Types, Constants & Configuration
 
-- [ ] `src/types/physics.ts`: versioned `PlanetaryState` schema (version field from day one)
-- [ ] Input parameter types per ARCHITECTURE.md §3.2 I/O contract (mass, radius, atmosphere composition, orbital distance, star type, rotation period, axial tilt — with unit suffixes)
-- [ ] `src/physics/constants.ts`: cited physical constants (NIST CODATA, IAU nominal values)
-- [ ] Planet Configuration System: input validation (range bounding, dimensional checks, relational checks) producing a hashed `ConfigurationManifest`
-- [ ] `PhysicsRangeError` and `SimulationDiagnostic` types (CLAUDE.md §19)
-- [ ] First ADRs in `docs/adr/`: physics-owns-all-values, renderer-reads-only, ai-no-simulation-influence, deterministic-seeding
-- [ ] `docs/references.md` scientific reference index started
+- [x] `src/types/physics.ts`: versioned `PlanetaryState` schema (version field from day one)
+- [x] Input parameter types per ARCHITECTURE.md §3.2 I/O contract (mass, radius, atmosphere composition, orbital distance, star type, rotation period, axial tilt — with unit suffixes)
+- [x] `src/physics/constants.ts`: cited physical constants (NIST CODATA, IAU nominal values)
+- [x] Planet Configuration System: input validation (range bounding, dimensional checks, relational checks) producing a hashed `ConfigurationManifest`
+- [x] `PhysicsRangeError` and `SimulationDiagnostic` types (CLAUDE.md §19)
+- [x] First ADRs in `docs/adr/`: physics-owns-all-values, renderer-reads-only, ai-no-simulation-influence, deterministic-seeding
+- [x] `docs/references.md` scientific reference index started
 
 ## Phase 2 — Physics Engine (MVP Calculations)
 
