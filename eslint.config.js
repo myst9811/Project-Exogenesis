@@ -15,6 +15,9 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // Physics error messages and diagnostics interpolate numeric values
+      // constantly; numbers stringify unambiguously.
+      '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       'no-console': 'error',
       'no-debugger': 'error',
       'prefer-const': 'error',
