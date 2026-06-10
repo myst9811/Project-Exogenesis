@@ -116,6 +116,19 @@ export const MAXIMUM_PLAUSIBLE_PLANET_DENSITY_KILOGRAMS_PER_CUBIC_METER = 30_000
 export const MAXIMUM_MODELED_SURFACE_PRESSURE_KILOPASCALS = 100_000;
 
 /**
+ * ESTIMATE: Upper bound on bound-orbit semi-major axis (≈ 1 parsec). Beyond
+ * this, galactic tides disrupt orbits around field stars.
+ * Source: Jiang & Tremaine (2010).
+ */
+export const MAXIMUM_BOUND_ORBIT_SEMI_MAJOR_AXIS_AU = 200_000;
+
+/**
+ * ESTIMATE: Upper bound on planetary radius (≈ 2.2 R♃). The most inflated
+ * known hot Jupiters reach ≈ 2 R♃ (e.g. WASP-17b, Anderson et al. 2010).
+ */
+export const MAXIMUM_PLANET_RADIUS_EARTH_RADII = 25;
+
+/**
  * ESTIMATE: Approximate main-sequence mass ranges per spectral class, in
  * solar masses [minimum, maximum]. Used for the relational consistency check
  * between declared spectral class and stellar mass; boundaries are fuzzy, so
