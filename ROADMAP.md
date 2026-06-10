@@ -28,13 +28,13 @@ Phase 8  Shareable world URLs
 
 Establish the engineering substrate required by the pre-commit checklist before any feature code exists.
 
-- [ ] TypeScript project with `strict: true` and all CLAUDE.md §10 compiler options
-- [ ] Test runner with per-module coverage gates (physics/translation: 100%)
-- [ ] Linting with zero-warning policy
-- [ ] `npm run test`, `npm run lint`, `npm run typecheck` scripts (required by pre-commit checklist)
-- [ ] Architectural lint rules enforcing module import boundaries (CLAUDE.md §4, ARCHITECTURE.md §3.2 guardrail)
-- [ ] Directory skeleton matching CLAUDE.md §3 module map
-- [ ] Exact-version dependency pinning (no `^`/`~`)
+- [x] TypeScript project with `strict: true` and all CLAUDE.md §10 compiler options
+- [x] Test runner with per-module coverage gates (physics/translation: 100%)
+- [x] Linting with zero-warning policy
+- [x] `npm run test`, `npm run lint`, `npm run typecheck` scripts (required by pre-commit checklist)
+- [x] Architectural lint rules enforcing module import boundaries (CLAUDE.md §4, ARCHITECTURE.md §3.2 guardrail)
+- [x] Directory skeleton matching CLAUDE.md §3 module map
+- [x] Exact-version dependency pinning (no `^`/`~`)
 
 **Exit criterion:** an empty module in each directory compiles, lints, and runs one trivial test.
 
