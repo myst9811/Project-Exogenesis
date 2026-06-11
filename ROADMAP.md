@@ -85,9 +85,16 @@ The framework-agnostic store core is complete; the store-library question is res
 
 ## Phase 6 — Renderer & Input Panels
 
-- [ ] React + Vite toolchain (introduced once here, shared by panels and renderer)
-- [ ] Input panels: stellar, orbital, planetary, atmospheric parameters (typed inputs via store actions; sliders produce inputs, never outputs)
-- [ ] React adapter over the store pub/sub primitive (`useSyncExternalStore`)
+### Phase 6a — Interactive app (complete)
+
+- [x] React + Vite toolchain (introduced once here, shared by panels and renderer)
+- [x] React adapter over the store pub/sub primitive (`useSyncExternalStore`)
+- [x] Input panels: stellar, orbital, planetary, atmospheric parameters (typed inputs via store actions; sliders produce inputs, never outputs)
+- [x] Felt-experience readout cards wiring the translation layer to computed state
+- [x] Diagnostics display and undo/redo history controls; default world seeded on load
+
+### Phase 6b — Renderer (raw Three.js, [ADR-006](docs/adr/006-raw-threejs-renderer.md))
+
 - [ ] Three.js scene with strictly ordered render passes (CLAUDE.md §8)
 - [ ] Planet sphere with surface color derived from composition and albedo
 - [ ] Atmospheric Rayleigh/Mie scattering derived from composition, pressure, and stellar spectrum
