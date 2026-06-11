@@ -64,9 +64,9 @@ Each calculation lands as its own commit pair (implementation + tests), each wit
 
 ## Phase 3 — Habitability Analysis
 
-- [ ] Structured habitability output (not a boolean — required by the Evolution Simulation future module)
-- [ ] Survival-model scoring per ARCHITECTURE.md §3.4 (human baseline first; extremophile/speculative models later)
-- [ ] Confidence labeling (`calculated` / `estimated` / `speculative`) on all outputs
+- [x] Structured habitability output (not a boolean — required by the Evolution Simulation future module)
+- [x] Survival-model scoring per ARCHITECTURE.md §3.4 (human baseline first; extremophile/speculative models later)
+- [x] Confidence labeling (`calculated` / `estimated` / `speculative`) on all outputs
 
 ## Phase 4 — Translation Layer
 

@@ -51,3 +51,15 @@ a new citation in code.
 | Kopparapu et al. (2013), *Habitable Zones around Main-sequence Stars: New Estimates*, ApJ 765, 131 (and erratum 2013, ApJ 770, 82) | doi:10.1088/0004-637X/765/2/131 | `physics/habitability` | HZ flux parameterization and coefficients |
 | Kopparapu et al. (2014), *Habitable Zones around Main-sequence Stars: Dependence on Planetary Mass*, ApJ 787, L29 | doi:10.1088/2041-8205/787/2/L29 | `physics/habitability` | 1 M⊕ runaway greenhouse coefficient update (values from the authors' HZ calculator coefficient file) |
 | Torres et al. (2015), *Validation of 12 Small Kepler Transiting Planets in the Habitable Zone*, ApJ 800, 99 | doi:10.1088/0004-637X/800/2/99 | `physics/habitability` tests | Kepler-442b host parameters and HZ membership test case |
+
+## Human Survival Tolerances (`physics/habitability/survival.ts`)
+
+These thresholds parameterize the Human Baseline survival model. They are aerospace- and environmental-physiology values applied to computed physics; the model labels them `estimated`, except gravity, which is `speculative` (only ~0 g and 1 g human data exist).
+
+| Reference | URL | Used for |
+|---|---|---|
+| West (2012), *High-altitude medicine*, Am. J. Respir. Crit. Care Med. 186(12), 1229 | doi:10.1164/rccm.201207-1323CI | Hypoxia floor and breathable O₂ partial-pressure range |
+| NOAA Diving Manual (2016), 6th ed., §3 (oxygen toxicity) | https://www.ngdc.noaa.gov/ | Acute oxygen-toxicity upper bound (high pO₂) |
+| NIOSH Pocket Guide to Chemical Hazards — carbon dioxide | https://www.cdc.gov/niosh/npg/npgd0103.html | CO₂ tolerable and lethal partial-pressure ceilings |
+| Survival of Rapid Decompression / Armstrong limit — NASA Bioastronautics Data Book (NASA SP-3006) | https://ntrs.nasa.gov/citations/19730006364 | Lower survivable pressure (Armstrong limit, ~6.3 kPa) |
+| Norsk & Damgaard (2014) and ISS microgravity physiology literature | doi:10.1113/jphysiol.2014.284869 | Gravity tolerance (1 g baseline; non-1 g extrapolation flagged speculative) |
