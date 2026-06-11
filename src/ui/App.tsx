@@ -14,6 +14,7 @@ import { commitConfiguration, createAppStores, createDefaultConfiguration } from
 import { DiagnosticsList } from './DiagnosticsList';
 import { HistoryControls } from './HistoryControls';
 import { InputPanels } from './InputPanels';
+import { NarrationPanel } from './NarrationPanel';
 import { PlanetViewport, type PlanetRendererFactory } from './PlanetViewport';
 import { StoresProvider } from './StoresProvider';
 import { WorldReadouts } from './WorldReadouts';
@@ -39,6 +40,7 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
           <div className="app-view">
             {createRenderer ? <PlanetViewport createRenderer={createRenderer} /> : <PlanetViewport />}
             <WorldReadouts />
+            <NarrationPanel />
           </div>
         </div>
         <DiagnosticsList />

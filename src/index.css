@@ -160,6 +160,73 @@ body {
   color: var(--muted);
 }
 
+.narration {
+  background: var(--panel);
+  border: 1px solid #2a3656;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+
+.narration-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.narration-actions button {
+  background: #0e1426;
+  color: var(--ink);
+  border: 1px solid #2a3656;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+
+.narration-actions button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.narration-status {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.narration-error {
+  color: var(--error);
+}
+
+.narration-disabled {
+  color: var(--muted);
+  margin: 0;
+}
+
+.narration-disabled code {
+  color: var(--accent);
+}
+
+.narration-text {
+  margin: 0.2rem 0;
+}
+
+.narration-speculation-label {
+  margin: 0 0 0.2rem;
+  font-style: italic;
+  color: var(--warning);
+}
+
+.narration-speculation {
+  border-left: 3px solid var(--warning);
+  padding-left: 0.75rem;
+}
+
+.narration-basis {
+  margin: 0.3rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
 .diagnostics ul {
   list-style: none;
   padding: 0;
