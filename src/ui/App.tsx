@@ -31,6 +31,7 @@ import { readWorldToken, writeWorldToken } from './worldUrl';
 export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory } = {}): JSX.Element {
   const [stores] = useState(createAppStores);
   const [linkError, setLinkError] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
 
   // On mount: load a shared world from the URL, else seed the default.
   // `active.value` is read across awaits; a holder object avoids the flow
@@ -58,22 +59,39 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
     };
   }, [stores]);
 
-  // Reflect every successfully computed world into the URL fragment.
+  // Reflect every successfully computed world into the URL fragment, and
+  // pulse the boot-scan line whenever the computed world changes.
   useEffect(() => {
+    let previousHash: string | null = null;
+    let scanTimer: ReturnType<typeof setTimeout> | undefined;
     const sync = (): void => {
       const state = stores.simulation.getState();
-      if (state.status === 'ready' && state.configuration !== null) {
-        writeWorldToken(encodeConfigurationToken(state.configuration));
+      if (state.status === 'ready' && state.planetaryState !== null) {
+        const hash = state.planetaryState.configurationHash;
+        if (previousHash !== null && previousHash !== hash) {
+          setScanning(true);
+          clearTimeout(scanTimer);
+          scanTimer = setTimeout(() => {
+            setScanning(false);
+          }, 800);
+        }
+        previousHash = hash;
+        if (state.configuration !== null) {
+          writeWorldToken(encodeConfigurationToken(state.configuration));
+        }
       }
     };
     const unsubscribe = stores.simulation.subscribe(sync);
     sync();
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      clearTimeout(scanTimer);
+    };
   }, [stores]);
 
   return (
     <StoresProvider stores={stores}>
-      <div className="console">
+      <div className={scanning ? 'console scanning' : 'console'}>
         <SystemHeader />
         {linkError !== null && (
           <p className="link-error" role="alert">

@@ -760,3 +760,160 @@ body {
   opacity: 0.4;
   animation: hud-ring-spin 90s linear infinite;
 }
+
+/* ── AI narration ──────────────────────────────────────────────────────── */
+
+.narration {
+  background: var(--void-panel);
+  border: 1px solid var(--border-dim);
+  border-left: 2px solid var(--amber-mid);
+  padding: 12px 14px 14px;
+}
+
+.narration-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.narration-actions button {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber-bright);
+  background: transparent;
+  border: 1px solid var(--amber-mid);
+  padding: 5px 10px;
+  cursor: pointer;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  transition: background 0.15s;
+}
+.narration-actions button:hover:not(:disabled) {
+  background: var(--amber-glow);
+}
+.narration-actions button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.narration-status {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.narration-error {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--status-critical);
+}
+
+.narration-disabled {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+.narration-disabled code {
+  color: var(--amber-bright);
+}
+
+.narration-text {
+  margin: 0.2rem 0;
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+
+.narration-speculation {
+  border-left: 2px solid var(--amber-mid);
+  padding-left: 10px;
+}
+
+.narration-speculation-label {
+  margin: 0 0 0.2rem;
+  font-style: italic;
+  color: var(--amber-bright);
+}
+
+.narration-basis {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-data);
+  color: var(--text-secondary);
+}
+
+/* ── Diagnostics ───────────────────────────────────────────────────────── */
+
+.diagnostics ul {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0 0;
+}
+
+.diagnostic {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  margin: 6px 0;
+  background: var(--void-panel);
+  border: 1px solid var(--border-dim);
+}
+
+.diagnostic-warning {
+  border-left: 2px solid var(--status-caution);
+}
+.diagnostic-error {
+  border-left: 2px solid var(--status-critical);
+}
+
+.diagnostic-severity {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.diagnostic-message {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-readout);
+}
+
+.diagnostic-explanation {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ── Responsive: vertical stack under 900px ────────────────────────────── */
+
+@media (max-width: 900px) {
+  .console-body {
+    grid-template-columns: 1fr;
+  }
+  .visualization-console {
+    position: static;
+  }
+  .planet-viewport {
+    height: 320px;
+  }
+  .system-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 16px;
+    gap: 8px;
+  }
+  .header-center {
+    order: 3;
+    width: 100%;
+  }
+  .parameter-console {
+    min-height: 0;
+  }
+}
