@@ -79,7 +79,7 @@ Each calculation lands as its own commit pair (implementation + tests), each wit
 - [x] Simulation store: physics writes `PlanetaryState`, all consumers subscribe read-only
 - [x] UI state store (never influences physics) and undo/redo history
 - [x] Physics error capture → `SimulationDiagnostic` surfaced to UI; errors never crash the UI
-- [ ] Input panels: stellar, orbital, planetary, atmospheric parameters (typed inputs only — sliders produce inputs, never outputs) — *deferred to Phase 6: these are React components needing the same toolchain as the renderer (see [ADR-005](docs/adr/005-hand-rolled-store.md); store core is framework-agnostic)*
+- [x] Input panels: stellar, orbital, planetary, atmospheric parameters (typed inputs only — sliders produce inputs, never outputs) — *completed in Phase 6a, where the React toolchain was introduced (see [ADR-005](docs/adr/005-hand-rolled-store.md))*
 
 The framework-agnostic store core is complete; the store-library question is resolved in [ADR-005](docs/adr/005-hand-rolled-store.md).
 
@@ -95,11 +95,11 @@ The framework-agnostic store core is complete; the store-library question is res
 
 ### Phase 6b — Renderer (raw Three.js, [ADR-006](docs/adr/006-raw-threejs-renderer.md))
 
-- [ ] Three.js scene with strictly ordered render passes (CLAUDE.md §8)
-- [ ] Planet sphere with surface color derived from composition and albedo
-- [ ] Atmospheric Rayleigh/Mie scattering derived from composition, pressure, and stellar spectrum
-- [ ] Stellar disk: apparent size and blackbody color from physics state
-- [ ] Renderer is a pure function of `PlanetaryState` + camera; zero authored visual constants
+- [x] Three.js scene with strictly ordered render passes (CLAUDE.md §8)
+- [x] Planet sphere with surface color derived from composition and albedo
+- [x] Atmospheric Rayleigh/Mie scattering derived from composition, pressure, and stellar spectrum
+- [x] Stellar disk: apparent size and blackbody color from physics state
+- [x] Renderer is a pure function of `PlanetaryState` + camera; zero authored visual constants
 
 ## Phase 7 — AI Description Layer
 

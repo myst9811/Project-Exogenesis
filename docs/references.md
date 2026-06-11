@@ -43,6 +43,7 @@ a new citation in code.
 | Hartmann (2016), *Global Physical Climatology*, 2nd ed., Elsevier | ISBN 978-0123285317 | `physics/configuration/earthBaseline` | Global-mean surface water-vapor partial pressure |
 | 3rd CGPM (1901), Resolution 2, *Declaration on the unit of mass and on the definition of standard gravity* | https://www.bipm.org/en/committees/cg/cgpm/3-1901/resolution-2 | `physics/constants` | Standard gravity g₀ |
 | IAPWS-95 / NIST Chemistry WebBook — water thermophysical properties | https://webbook.nist.gov/chemistry/ | `physics/constants` | Water triple-point pressure and molar enthalpy of vaporization |
+| Tanner Helland (2012), *How to Convert Temperature (K) to RGB* | https://tannerhelland.com/2012/09/18/convert-temperature-rgb-algorithm-code.html | `renderer/star` | Piecewise approximation of blackbody (Planckian-locus) color |
 
 ## Habitable Zone
 
