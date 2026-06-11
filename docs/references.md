@@ -15,6 +15,7 @@ a new citation in code.
 | CRC Handbook of Chemistry and Physics — dry-air composition | — | `physics/configuration/earthBaseline` | Molar fractions of N₂, O₂, Ar, CO₂ |
 | NASA Earth Fact Sheet (NSSDC) | https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html | `physics/configuration/earthBaseline`, `physics/planetary` tests | Orbital eccentricity, sidereal day, obliquity, mean radius, bulk density |
 | Planck Collaboration (2020), *Planck 2018 results. VI. Cosmological parameters*, A&A 641, A6 | doi:10.1051/0004-6361/201833910 | `physics/constants` | Age of the universe (stellar age upper bound) |
+| CIAAW 2021 standard atomic weights (via NIST Chemistry WebBook) | https://www.ciaaw.org/atomic-weights.htm | `physics/constants` | Molar masses of modeled atmospheric gases |
 
 ## Peer-Reviewed Papers
 

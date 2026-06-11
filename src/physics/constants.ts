@@ -8,7 +8,7 @@
  * docs/references.md.
  */
 
-import type { SpectralClass } from '../types/configuration';
+import type { AtmosphericGas, SpectralClass } from '../types/configuration';
 
 // ── Fundamental constants ──────────────────────────────────────────────────
 
@@ -66,6 +66,32 @@ export const JUPITER_MASS_KILOGRAMS =
 
 export const SECONDS_PER_HOUR = 3600; // s
 export const SECONDS_PER_DAY = 86_400; // s
+
+// ── Gas physics ────────────────────────────────────────────────────────────
+
+/** Avogadro constant. Exact since the 2019 SI redefinition. Source: CODATA 2022. */
+export const AVOGADRO_CONSTANT_N_A = 6.022_140_76e23; // mol⁻¹
+
+/** Molar gas constant R = N_A · k_B. Exact (derived). Source: CODATA 2022. */
+export const MOLAR_GAS_CONSTANT_R = AVOGADRO_CONSTANT_N_A * BOLTZMANN_CONSTANT_K_B; // J mol⁻¹ K⁻¹
+
+/** Earth standard sea-level atmospheric pressure. Source: US Standard Atmosphere 1976. */
+export const EARTH_SURFACE_PRESSURE_KILOPASCALS = 101.325; // kPa
+
+/**
+ * Molar masses of the modeled atmospheric gases, kg/mol.
+ * Source: CIAAW 2021 standard atomic weights (via NIST WebBook).
+ */
+export const MOLAR_MASS_KILOGRAMS_PER_MOLE: Record<AtmosphericGas, number> = {
+  N2: 28.0134e-3,
+  O2: 31.9988e-3,
+  CO2: 44.0095e-3,
+  H2O: 18.01528e-3,
+  CH4: 16.04246e-3,
+  H2: 2.01588e-3,
+  He: 4.002602e-3,
+  Ar: 39.948e-3,
+};
 
 // ── Validation bounds (Planet Configuration System) ────────────────────────
 
