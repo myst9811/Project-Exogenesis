@@ -110,14 +110,14 @@ export function createSimulationStore(options: SimulationStoreOptions = {}): Sim
     const validation = validatePlanetConfiguration(configuration);
 
     if (!validation.valid) {
-      if (request === latestRequest) {
-        store.setState((previous) => ({
-          ...previous,
-          configuration,
-          diagnostics: validation.diagnostics,
-          status: 'invalid',
-        }));
-      }
+      // No await precedes this, so no newer request can have superseded us
+      // here; the stale guard is only needed after the async hash below.
+      store.setState((previous) => ({
+        ...previous,
+        configuration,
+        diagnostics: validation.diagnostics,
+        status: 'invalid',
+      }));
       return;
     }
 
