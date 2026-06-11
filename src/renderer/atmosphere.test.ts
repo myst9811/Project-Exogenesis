@@ -41,6 +41,11 @@ describe('deriveAtmosphereAppearance', () => {
     expect(result.opacity).toBeLessThan(0.02);
   });
 
+  it('yields a black sky for a star with no light (degenerate all-zero color)', () => {
+    const { skyColorRgb } = deriveAtmosphereAppearance(101.325, { r: 0, g: 0, b: 0 });
+    expect(skyColorRgb).toEqual({ r: 0, g: 0, b: 0 });
+  });
+
   it('boosts blue relative to the stellar ratio under a red dwarf', () => {
     const star = { r: 1, g: 0.4, b: 0.15 };
     const { skyColorRgb } = deriveAtmosphereAppearance(101.325, star);
