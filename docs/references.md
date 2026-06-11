@@ -34,6 +34,7 @@ a new citation in code.
 | Duric (2004), *Advanced Astrophysics*, Cambridge University Press, §1.3 | ISBN 978-0521525717 | `physics/stellar` | Piecewise main-sequence mass–luminosity relation |
 | Demircan & Kahraman (1991), *Stellar mass-luminosity and mass-radius relations*, Ap&SS 181, 313 | doi:10.1007/BF00639097 | `physics/stellar` | Main-sequence mass–radius relation |
 | Anglada-Escudé et al. (2016), *A terrestrial planet candidate in a temperate orbit around Proxima Centauri*, Nature 536, 437 | doi:10.1038/nature19106 | `physics/stellar` tests | Proxima Centauri mass, luminosity, radius, temperature test case |
+| Catling & Zahnle (2009), *The Planetary Air Leak*, Scientific American 300(5), 36 | doi:10.1038/scientificamerican0509-36 | `physics/atmosphere` | Jeans escape rule-of-thumb retention thresholds |
 
 ## Reserved for Phase 2 (selected, not yet implemented)
 
