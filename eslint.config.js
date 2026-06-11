@@ -221,12 +221,9 @@ export default tseslint.config(
                 '**/physics/**',
                 '!**/physics/**/*.types',
                 '!**/types/physics',
-                '**/ai',
-                '**/ai/**',
-                '!**/types/ai',
               ],
               message:
-                'ui/ performs no physics and talks to no AI directly: submit inputs and read results via store actions only.',
+                'ui/ performs no physics inline: submit parameter changes via store actions and read computed state from the store. (It may import physics type definitions, the read-only renderer, and the read-only AI explainer — presentation wiring that cannot influence the simulation.)',
             },
           ],
         },
