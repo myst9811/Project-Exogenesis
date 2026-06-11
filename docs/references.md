@@ -31,6 +31,9 @@ a new citation in code.
 | Anderson et al. (2010), *WASP-17b: an ultra-low density planet in a probable retrograde orbit*, ApJ 709, 159 | doi:10.1088/0004-637X/709/1/159 | `physics/constants` | Maximum observed planetary radius (~2 R♃) |
 | Bouvier & Wadhwa (2010), *The age of the Solar System redefined by the oldest Pb–Pb age of a meteoritic inclusion*, Nature Geoscience 3, 637 | doi:10.1038/ngeo941 | `physics/configuration/earthBaseline` | Solar age (4.567 Gyr) |
 | Dumusque et al. (2014), *The Kepler-10 Planetary System Revisited by HARPS-N*, ApJ 789, 154 | doi:10.1088/0004-637X/789/2/154 | `physics/planetary` tests | Kepler-10b mass, radius, and density test case |
+| Duric (2004), *Advanced Astrophysics*, Cambridge University Press, §1.3 | ISBN 978-0521525717 | `physics/stellar` | Piecewise main-sequence mass–luminosity relation |
+| Demircan & Kahraman (1991), *Stellar mass-luminosity and mass-radius relations*, Ap&SS 181, 313 | doi:10.1007/BF00639097 | `physics/stellar` | Main-sequence mass–radius relation |
+| Anglada-Escudé et al. (2016), *A terrestrial planet candidate in a temperate orbit around Proxima Centauri*, Nature 536, 437 | doi:10.1038/nature19106 | `physics/stellar` tests | Proxima Centauri mass, luminosity, radius, temperature test case |
 
 ## Reserved for Phase 2 (selected, not yet implemented)
 
