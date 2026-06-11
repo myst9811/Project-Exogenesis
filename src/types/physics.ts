@@ -9,7 +9,7 @@
  * echoed `PlanetConfiguration` (see types/configuration.ts).
  */
 
-import type { PlanetConfiguration } from './configuration';
+import type { AtmosphericGas, PlanetConfiguration } from './configuration';
 
 /**
  * Schema version of `PlanetaryState`. Increment on any breaking change;
@@ -44,25 +44,62 @@ export interface PlanetaryBulkState {
   escapeVelocityMetersPerSecond: number;
 }
 
+/** Thermal escape outlook classification for one gas (Jeans criterion). */
+export type JeansRetentionClassification = 'retained' | 'losing' | 'escaping';
+
+/** Thermal escape outlook for one atmospheric gas. */
+export interface GasRetentionResult {
+  gas: AtmosphericGas;
+  /** Dimensionless Jeans escape parameter λ at the evaluation temperature. */
+  jeansParameter: number;
+  classification: JeansRetentionClassification;
+}
+
 /** Computed surface-level atmospheric properties. */
 export interface AtmosphericState {
   /** Sum of all gas partial pressures at the surface. */
   surfacePressureKilopascals: number;
+  /** Pressure-weighted mean molar mass; null for an airless world. */
+  meanMolarMassKilogramsPerMole: number | null;
+  /** Isothermal scale height; null for an airless world. */
+  scaleHeightMeters: number | null;
+  /** Jeans escape outlook per present gas. */
+  gasRetention: GasRetentionResult[];
 }
 
 /** Computed energy-budget properties. */
 export interface ClimateState {
-  /**
-   * Equilibrium (blackbody) surface temperature — no greenhouse forcing.
-   * Greenhouse-adjusted temperature is added when the climate module lands.
-   */
+  /** Bond albedo estimated from the bulk composition class. */
+  bondAlbedo: number;
+  /** Equilibrium (blackbody) surface temperature — no greenhouse forcing. */
   equilibriumTemperatureKelvin: number;
+  /** Gray longwave optical depth of the atmosphere. */
+  greenhouseOpticalDepth: number;
+  /** Greenhouse-adjusted surface temperature. */
+  surfaceTemperatureKelvin: number;
 }
 
-/** Computed habitable-zone geometry for the host star. */
+/** Planet position relative to the habitable zone. */
+export type HabitableZonePosition =
+  | 'too-hot'
+  | 'inside-optimistic'
+  | 'inside-conservative'
+  | 'too-cold';
+
+/**
+ * Computed habitable-zone geometry (Kopparapu parameterization) and the
+ * planet's position within it.
+ */
 export interface HabitableZoneState {
-  innerEdgeMeters: number;
-  outerEdgeMeters: number;
+  /** Runaway greenhouse limit — inner edge of the conservative zone. */
+  conservativeInnerEdgeMeters: number;
+  /** Maximum greenhouse limit — outer edge of the conservative zone. */
+  conservativeOuterEdgeMeters: number;
+  /** Recent Venus limit — inner edge of the optimistic zone. */
+  optimisticInnerEdgeMeters: number;
+  /** Early Mars limit — outer edge of the optimistic zone. */
+  optimisticOuterEdgeMeters: number;
+  position: HabitableZonePosition;
 }
 
 /**
@@ -81,5 +118,11 @@ export interface PlanetaryState {
   bulk: PlanetaryBulkState;
   atmosphere: AtmosphericState;
   climate: ClimateState;
-  habitableZone: HabitableZoneState;
+  /**
+   * Null when the stellar effective temperature exceeds the 7200 K upper
+   * domain bound of the Kopparapu parameterization. (The 2600 K lower
+   * bound is unreachable: the main-sequence relations floor T_eff near
+   * 2980 K at the minimum stellar mass admitted by validation.)
+   */
+  habitableZone: HabitableZoneState | null;
 }

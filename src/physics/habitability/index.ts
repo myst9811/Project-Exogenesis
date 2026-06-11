@@ -22,6 +22,7 @@
  *   - Structured habitability scoring (Phase 3)
  */
 
+import type { HabitableZonePosition } from '../../types/physics';
 import {
   ASTRONOMICAL_UNIT_AU,
   NOMINAL_SOLAR_LUMINOSITY_L_SUN,
@@ -96,12 +97,6 @@ export interface HabitableZoneResult {
   /** Early Mars limit — outer edge of the optimistic HZ. */
   optimisticOuterEdgeMeters: number;
 }
-
-export type HabitableZonePosition =
-  | 'too-hot'
-  | 'inside-optimistic'
-  | 'inside-conservative'
-  | 'too-cold';
 
 /** Evaluates one Kopparapu limit's effective flux (Earth insolation units). */
 function computeEffectiveFlux(

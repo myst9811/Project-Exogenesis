@@ -20,6 +20,7 @@
  */
 
 import type { AtmosphericGas } from '../../types/configuration';
+import type { GasRetentionResult, JeansRetentionClassification } from '../../types/physics';
 import {
   AVOGADRO_CONSTANT_N_A,
   BOLTZMANN_CONSTANT_K_B,
@@ -36,16 +37,6 @@ import { PhysicsRangeError } from '../errors';
  */
 export const JEANS_PARAMETER_RETAINED_THRESHOLD = 54;
 export const JEANS_PARAMETER_ESCAPING_THRESHOLD = 24;
-
-export type JeansRetentionClassification = 'retained' | 'losing' | 'escaping';
-
-/** Thermal escape outlook for one atmospheric gas. */
-export interface GasRetentionResult {
-  gas: AtmosphericGas;
-  /** Dimensionless Jeans escape parameter λ at the evaluation temperature. */
-  jeansParameter: number;
-  classification: JeansRetentionClassification;
-}
 
 /**
  * Computes total surface pressure as the sum of partial pressures
