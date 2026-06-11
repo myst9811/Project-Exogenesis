@@ -35,6 +35,12 @@ a new citation in code.
 | Demircan & Kahraman (1991), *Stellar mass-luminosity and mass-radius relations*, Ap&SS 181, 313 | doi:10.1007/BF00639097 | `physics/stellar` | Main-sequence mass–radius relation |
 | Anglada-Escudé et al. (2016), *A terrestrial planet candidate in a temperate orbit around Proxima Centauri*, Nature 536, 437 | doi:10.1038/nature19106 | `physics/stellar` tests | Proxima Centauri mass, luminosity, radius, temperature test case |
 | Catling & Zahnle (2009), *The Planetary Air Leak*, Scientific American 300(5), 36 | doi:10.1038/scientificamerican0509-36 | `physics/atmosphere` | Jeans escape rule-of-thumb retention thresholds |
+| de Pater & Lissauer (2015), *Planetary Sciences*, 2nd ed., Cambridge University Press, §3.1 | doi:10.1017/CBO9781316165270 | `physics/climate` | Energy balance equilibrium temperature model |
+| Pierrehumbert (2010), *Principles of Planetary Climate*, Cambridge University Press, ch. 4 | doi:10.1017/CBO9780511780783 | `physics/climate` | Gray two-stream greenhouse model; curve-of-growth √p scaling |
+| Schmidt et al. (2010), *Attribution of the present-day total greenhouse effect*, JGR 115, D20106 | doi:10.1029/2010JD014287 | `physics/climate` | Per-gas split of Earth's greenhouse optical depth anchors |
+| Gillon et al. (2017), *Seven temperate terrestrial planets around the nearby ultracool dwarf star TRAPPIST-1*, Nature 542, 456 | doi:10.1038/nature21360 | `physics/climate` tests | TRAPPIST-1b equilibrium temperature test case |
+| NASA Venus / Mars / Jupiter Fact Sheets (NSSDC) | https://nssdc.gsfc.nasa.gov/planetary/factsheet/ | `physics/climate`, `physics/planetary`, `physics/atmosphere` tests | Bond albedos, surface pressures/temperatures, escape velocity anchors |
+| Hartmann (2016), *Global Physical Climatology*, 2nd ed., Elsevier | ISBN 978-0123285317 | `physics/configuration/earthBaseline` | Global-mean surface water-vapor partial pressure |
 
 ## Reserved for Phase 2 (selected, not yet implemented)
 
