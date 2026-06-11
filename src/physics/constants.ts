@@ -93,6 +93,28 @@ export const MOLAR_MASS_KILOGRAMS_PER_MOLE: Record<AtmosphericGas, number> = {
   Ar: 39.948e-3,
 };
 
+// ── Standard gravity ───────────────────────────────────────────────────────
+
+/** Standard gravity g₀, the conventional Earth value. Exact. Source: 3rd CGPM (1901). */
+export const STANDARD_GRAVITY_METERS_PER_SECOND_SQUARED = 9.806_65; // m/s²
+
+// ── Water phase physics ────────────────────────────────────────────────────
+
+/** Water freezing point at standard pressure (0 °C, by definition). */
+export const WATER_FREEZING_POINT_KELVIN = 273.15; // K
+
+/** Water boiling point at 1 standard atmosphere (100 °C, by definition). */
+export const WATER_BOILING_POINT_STANDARD_KELVIN = 373.15; // K
+
+/** Water triple-point pressure — below this, liquid water cannot exist. Source: IAPWS-95 / NIST. */
+export const WATER_TRIPLE_POINT_PRESSURE_KILOPASCALS = 0.611_657; // kPa
+
+/**
+ * Molar enthalpy of vaporization of water near its normal boiling point.
+ * Source: NIST Chemistry WebBook (≈ 40.66 kJ/mol at 373 K).
+ */
+export const WATER_LATENT_HEAT_VAPORIZATION_JOULES_PER_MOLE = 40_660; // J/mol
+
 // ── Validation bounds (Planet Configuration System) ────────────────────────
 
 /**

@@ -41,6 +41,8 @@ a new citation in code.
 | Gillon et al. (2017), *Seven temperate terrestrial planets around the nearby ultracool dwarf star TRAPPIST-1*, Nature 542, 456 | doi:10.1038/nature21360 | `physics/climate` tests | TRAPPIST-1b equilibrium temperature test case |
 | NASA Venus / Mars / Jupiter Fact Sheets (NSSDC) | https://nssdc.gsfc.nasa.gov/planetary/factsheet/ | `physics/climate`, `physics/planetary`, `physics/atmosphere` tests | Bond albedos, surface pressures/temperatures, escape velocity anchors |
 | Hartmann (2016), *Global Physical Climatology*, 2nd ed., Elsevier | ISBN 978-0123285317 | `physics/configuration/earthBaseline` | Global-mean surface water-vapor partial pressure |
+| 3rd CGPM (1901), Resolution 2, *Declaration on the unit of mass and on the definition of standard gravity* | https://www.bipm.org/en/committees/cg/cgpm/3-1901/resolution-2 | `physics/constants` | Standard gravity g₀ |
+| IAPWS-95 / NIST Chemistry WebBook — water thermophysical properties | https://webbook.nist.gov/chemistry/ | `physics/constants` | Water triple-point pressure and molar enthalpy of vaporization |
 
 ## Habitable Zone
 
