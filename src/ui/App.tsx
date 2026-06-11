@@ -14,10 +14,11 @@ import { commitConfiguration, createAppStores, createDefaultConfiguration } from
 import { DiagnosticsList } from './DiagnosticsList';
 import { HistoryControls } from './HistoryControls';
 import { InputPanels } from './InputPanels';
+import { PlanetViewport, type PlanetRendererFactory } from './PlanetViewport';
 import { StoresProvider } from './StoresProvider';
 import { WorldReadouts } from './WorldReadouts';
 
-export function App(): JSX.Element {
+export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory } = {}): JSX.Element {
   const [stores] = useState(createAppStores);
 
   // Seed the default world once, so the app opens on a computed Earth.
@@ -35,7 +36,10 @@ export function App(): JSX.Element {
         </header>
         <div className="app-body">
           <InputPanels />
-          <WorldReadouts />
+          <div className="app-view">
+            {createRenderer ? <PlanetViewport createRenderer={createRenderer} /> : <PlanetViewport />}
+            <WorldReadouts />
+          </div>
         </div>
         <DiagnosticsList />
       </main>
