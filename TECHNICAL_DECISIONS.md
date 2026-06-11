@@ -95,9 +95,9 @@ Liquid-water availability is reported as its **own field**, not folded into acut
 
 ## Open questions (to be resolved as ADRs before the relevant phase)
 
-1. **Store library** (Phase 5): minimal hand-rolled store vs. Zustand-class library — decide against bundle budget and immutability ergonomics.
-2. **Deterministic transcendental functions** (Phase 8): whether URL-shared worlds need bitwise-identical recomputation across browsers or tolerance-based equality suffices.
+1. **Deterministic transcendental functions** (Phase 8): whether URL-shared worlds need bitwise-identical recomputation across browsers or tolerance-based equality suffices.
 
 ## Resolved
 
+- **Store library** (Phase 5): resolved in [ADR-005](docs/adr/005-hand-rolled-store.md) — hand-rolled framework-agnostic pub/sub store in pure TS, no runtime dependency. The dependency policy (CLAUDE.md §17, "implement anything <50 lines") is near-determinative; Zustand's value is React-coupled and belongs in `ui/`, not `store/`. React itself is deferred to Phase 6.
 - **Greenhouse forcing model** (Phase 2): resolved in commit `512bbb8` — a gray two-stream model (Pierrehumbert 2010) with per-gas optical depths scaling as √p (strong-line curve of growth) and a pressure-broadening factor, calibrated to Earth and validated against Venus and Mars. Satisfies the "not linear interpolation of temperature" requirement; citations in `docs/references.md`.
