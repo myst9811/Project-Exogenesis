@@ -49,10 +49,14 @@ describe('InputPanels', () => {
     fireEvent.change(massInput, { target: { value: '2' } });
     fireEvent.blur(massInput);
 
+    // Wait for the terminal 'ready' status: the store sets `configuration`
+    // synchronously in the 'computing' branch (before the async hash), so
+    // waiting on the config alone races the still-pending recompute. 'ready'
+    // implies the config updated and the world recomputed.
     await waitFor(() => {
-      expect(stores.simulation.getState().configuration?.planetary.massEarthMasses).toBe(2);
+      expect(stores.simulation.getState().status).toBe('ready');
     });
-    expect(stores.simulation.getState().status).toBe('ready');
+    expect(stores.simulation.getState().configuration?.planetary.massEarthMasses).toBe(2);
     expect(stores.history.canUndo()).toBe(true);
   });
 
