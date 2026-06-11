@@ -1,3 +1,4 @@
+import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -29,6 +30,16 @@ export default tseslint.config(
             'Math.random() is forbidden: the simulation must be deterministic. Use an explicit, documented seed.',
         },
       ],
+    },
+  },
+
+  // ── React hooks correctness (ui/ components) ──
+  {
+    files: ['src/ui/**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks },
+    rules: {
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'error',
     },
   },
 
