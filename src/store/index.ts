@@ -36,6 +36,8 @@ export type { HistoryState, HistoryStore } from './history';
 export {
   commitConfiguration,
   createAppStores,
+  encodeConfigurationToken,
+  loadConfigurationToken,
   redoConfiguration,
   undoConfiguration,
 } from './app';
