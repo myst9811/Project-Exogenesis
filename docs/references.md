@@ -42,8 +42,10 @@ a new citation in code.
 | NASA Venus / Mars / Jupiter Fact Sheets (NSSDC) | https://nssdc.gsfc.nasa.gov/planetary/factsheet/ | `physics/climate`, `physics/planetary`, `physics/atmosphere` tests | Bond albedos, surface pressures/temperatures, escape velocity anchors |
 | Hartmann (2016), *Global Physical Climatology*, 2nd ed., Elsevier | ISBN 978-0123285317 | `physics/configuration/earthBaseline` | Global-mean surface water-vapor partial pressure |
 
-## Reserved for Phase 2 (selected, not yet implemented)
+## Habitable Zone
 
-| Reference | DOI | Planned use |
-|---|---|---|
-| Kopparapu et al. (2013), *Habitable Zones around Main-sequence Stars*, ApJ 765, 131 | doi:10.1088/0004-637X/765/2/131 | Habitable zone boundary calculator |
+| Reference | DOI | Used by | Purpose |
+|---|---|---|---|
+| Kopparapu et al. (2013), *Habitable Zones around Main-sequence Stars: New Estimates*, ApJ 765, 131 (and erratum 2013, ApJ 770, 82) | doi:10.1088/0004-637X/765/2/131 | `physics/habitability` | HZ flux parameterization and coefficients |
+| Kopparapu et al. (2014), *Habitable Zones around Main-sequence Stars: Dependence on Planetary Mass*, ApJ 787, L29 | doi:10.1088/2041-8205/787/2/L29 | `physics/habitability` | 1 M⊕ runaway greenhouse coefficient update (values from the authors' HZ calculator coefficient file) |
+| Torres et al. (2015), *Validation of 12 Small Kepler Transiting Planets in the Habitable Zone*, ApJ 800, 99 | doi:10.1088/0004-637X/800/2/99 | `physics/habitability` tests | Kepler-442b host parameters and HZ membership test case |
