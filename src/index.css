@@ -375,3 +375,189 @@ body {
   outline: 2px solid var(--cyan-bright);
   outline-offset: 2px;
 }
+
+/* ── Tactical panels ───────────────────────────────────────────────────── */
+
+.input-panels {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.tactical-panel {
+  position: relative;
+  background: var(--void-panel);
+  border: 1px solid var(--border-dim);
+  padding: 14px 16px 16px;
+  margin-bottom: 14px;
+  animation: panel-enter 0.4s ease-out both;
+  animation-delay: calc(var(--panel-index, 0) * 80ms);
+}
+
+.tactical-panel::before,
+.tactical-panel::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+}
+.tactical-panel::before {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid var(--cyan-mid);
+  border-right: 2px solid var(--cyan-mid);
+}
+.tactical-panel::after {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid var(--cyan-dim);
+  border-left: 2px solid var(--cyan-dim);
+}
+
+.panel-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--grid-line);
+}
+
+.panel-eyebrow {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--cyan-bright);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.panel-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--status-nominal);
+  margin-left: auto;
+  animation: pulse-nominal 2.4s ease-in-out infinite;
+}
+
+.panel-note {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+/* ── Tactical fields ───────────────────────────────────────────────────── */
+
+.tactical-field,
+.select-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--grid-line);
+}
+
+.field-label {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-data);
+  text-transform: uppercase;
+}
+
+.field-input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.tactical-input {
+  font-family: var(--font-data);
+  font-size: var(--text-data);
+  color: var(--text-readout);
+  background: var(--void-raised);
+  border: 1px solid var(--border-dim);
+  border-left: 0;
+  border-right: 0;
+  padding: 4px 8px;
+  width: 84px;
+  text-align: center;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.tactical-input::-webkit-outer-spin-button,
+.tactical-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tactical-input:focus {
+  outline: none;
+  border-color: var(--cyan-bright);
+  box-shadow:
+    0 0 0 1px var(--cyan-glow),
+    0 0 12px var(--cyan-glow);
+}
+
+.step-btn {
+  font-family: var(--font-data);
+  font-size: 0.9rem;
+  color: var(--cyan-mid);
+  background: var(--void-raised);
+  border: 1px solid var(--border-dim);
+  width: 26px;
+  cursor: pointer;
+  transition:
+    background 0.1s,
+    color 0.1s,
+    border-color 0.1s;
+}
+.step-btn:hover {
+  background: var(--void-hover);
+  color: var(--cyan-bright);
+  border-color: var(--border-active);
+}
+
+.select-field select {
+  font-family: var(--font-data);
+  font-size: var(--text-body);
+  color: var(--text-readout);
+  background: var(--void-raised);
+  border: 1px solid var(--border-dim);
+  padding: 4px 28px 4px 10px;
+  text-align: left;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--cyan-mid) 50%),
+    linear-gradient(135deg, var(--cyan-mid) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 9px) 50%;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.select-field select:focus {
+  outline: none;
+  border-color: var(--cyan-bright);
+  box-shadow: 0 0 0 1px var(--cyan-glow);
+}

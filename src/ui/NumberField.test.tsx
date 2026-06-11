@@ -52,4 +52,25 @@ describe('NumberField', () => {
     render(<NumberField label="Mass" unit="M⊕" value={1} onCommit={vi.fn()} />);
     expect(screen.getByText('Mass (M⊕)')).toBeTruthy();
   });
+
+  it('nudges up by one step on the increase button, avoiding float noise', () => {
+    const onCommit = vi.fn();
+    render(<NumberField label="Mass" value={1} step={0.1} onCommit={onCommit} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Increase Mass' }));
+    expect(onCommit).toHaveBeenCalledExactlyOnceWith(1.1);
+  });
+
+  it('nudges down and clamps to the minimum', () => {
+    const onCommit = vi.fn();
+    render(<NumberField label="Mass" value={0.05} min={0} step={0.1} onCommit={onCommit} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Decrease Mass' }));
+    expect(onCommit).toHaveBeenCalledExactlyOnceWith(0);
+  });
+
+  it('does not commit a nudge that would not change the clamped value', () => {
+    const onCommit = vi.fn();
+    render(<NumberField label="Mass" value={0} min={0} step={0.1} onCommit={onCommit} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Decrease Mass' }));
+    expect(onCommit).not.toHaveBeenCalled();
+  });
 });
