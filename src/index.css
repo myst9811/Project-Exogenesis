@@ -1,0 +1,180 @@
+:root {
+  --bg: #0b1020;
+  --panel: #141b30;
+  --ink: #e8ecf6;
+  --muted: #9aa6c4;
+  --accent: #7fb2ff;
+  --warning: #ffce6b;
+  --error: #ff8a8a;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-weight: 650;
+}
+
+.history-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+
+.history-controls button {
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid #2a3656;
+  border-radius: 6px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+}
+
+.history-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sim-status {
+  color: var(--muted);
+  font-variant: small-caps;
+}
+
+.app-body {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(320px, 1.4fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.input-panels fieldset {
+  border: 1px solid #2a3656;
+  border-radius: 8px;
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem 1rem;
+}
+
+.input-panels legend {
+  color: var(--accent);
+  font-weight: 600;
+  padding: 0 0.4rem;
+}
+
+.number-field,
+.select-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.4rem 0;
+}
+
+.field-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.number-field input,
+.select-field select {
+  background: #0e1426;
+  color: var(--ink);
+  border: 1px solid #2a3656;
+  border-radius: 5px;
+  padding: 0.3rem 0.5rem;
+  width: 9rem;
+}
+
+.readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.9rem;
+}
+
+.readout-card {
+  background: var(--panel);
+  border: 1px solid #2a3656;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+
+.readout-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.readout-brief {
+  margin: 0 0 0.3rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.readout-narrative {
+  margin: 0 0 0.4rem;
+}
+
+.readout-comparison {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.readout-raw {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.diagnostics ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+}
+
+.diagnostic {
+  display: grid;
+  gap: 0.15rem;
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  margin: 0.4rem 0;
+  background: var(--panel);
+}
+
+.diagnostic-warning {
+  border-left: 3px solid var(--warning);
+}
+
+.diagnostic-error {
+  border-left: 3px solid var(--error);
+}
+
+.diagnostic-severity {
+  font-variant: small-caps;
+  color: var(--muted);
+}
+
+.diagnostic-explanation {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
