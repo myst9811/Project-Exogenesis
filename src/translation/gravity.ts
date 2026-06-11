@@ -2,19 +2,27 @@
  * @module translation/gravity
  *
  * Translates surface gravity and escape velocity into felt experience.
- * Inputs are in human-facing units (Earth-gravity ratio, m/s) so the layer
- * stays free of physics-engine constants (CLAUDE.md §4 boundary).
+ * Functions take raw SI values and frame them internally, like the rest of
+ * the translation layer; the definitional standard-gravity constant is kept
+ * local so the layer imports nothing from `physics/` (CLAUDE.md §4 boundary).
  */
 
 import type { HumanTranslation } from '../types/translation';
 
+/** Standard gravity g₀ in m/s² (definitional, 3rd CGPM 1901). */
+const STANDARD_GRAVITY_METERS_PER_SECOND_SQUARED = 9.806_65;
+
 /**
- * Translates surface gravity, expressed as a multiple of Earth's gravity.
+ * Translates surface gravity.
  *
- * @param gravityEarthUnits - Surface gravity in Earth gravities (g)
+ * @param surfaceGravityMetersPerSecondSquared - Surface gravity in m/s²
  * @returns Felt-experience translation
  */
-export function translateGravity(gravityEarthUnits: number): HumanTranslation {
+export function translateGravity(
+  surfaceGravityMetersPerSecondSquared: number,
+): HumanTranslation {
+  const gravityEarthUnits =
+    surfaceGravityMetersPerSecondSquared / STANDARD_GRAVITY_METERS_PER_SECOND_SQUARED;
   const earthComparison = `${gravityEarthUnits.toFixed(2)}× Earth's surface gravity.`;
   if (gravityEarthUnits < 0.1) {
     return {
