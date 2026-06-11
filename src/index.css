@@ -58,6 +58,33 @@ body {
   font-variant: small-caps;
 }
 
+.share-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.4rem 0;
+}
+
+.share-link button {
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid #2a3656;
+  border-radius: 6px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+}
+
+.share-confirm {
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.link-error {
+  color: var(--warning);
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+}
+
 .app-body {
   display: grid;
   grid-template-columns: minmax(260px, 1fr) minmax(320px, 1.4fr);
