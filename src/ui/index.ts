@@ -1,10 +1,9 @@
 /**
  * @module ui
  *
- * React components. Pure display — zero physics logic.
- *
- * Scaffolding only — implementation arrives in its roadmap phase.
- * See ROADMAP.md and .claude/CLAUDE.md §3 for the module contract.
+ * Public surface of the React UI layer. Components are pure display: they
+ * read state and dispatch typed inputs through store actions, performing no
+ * physics themselves (CLAUDE.md §4).
  */
 
-export {};
+export { App } from './App';
