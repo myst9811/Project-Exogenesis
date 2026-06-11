@@ -7,7 +7,11 @@ import { describe, expect, it } from 'vitest';
 import type { PlanetConfiguration } from '../../types/configuration';
 import { PLANETARY_STATE_SCHEMA_VERSION } from '../../types/physics';
 import { createEarthBaselineConfiguration } from './earthBaseline';
-import { buildConfigurationManifest, canonicalizeForHashing } from './manifest';
+import {
+  buildConfigurationManifest,
+  canonicalizeForHashing,
+  hashConfiguration,
+} from './manifest';
 
 describe('canonicalizeForHashing', () => {
   it('sorts object keys so insertion order does not affect output', () => {
@@ -96,5 +100,27 @@ describe('buildConfigurationManifest', () => {
       expect(result.diagnostics.length).toBeGreaterThan(0);
       expect(result.diagnostics[0]?.parameter).toBe('planetary.massEarthMasses');
     }
+  });
+});
+
+describe('hashConfiguration', () => {
+  it('produces the same manifest as buildConfigurationManifest for a valid configuration', async () => {
+    const configuration = createEarthBaselineConfiguration();
+    const [direct, built] = await Promise.all([
+      hashConfiguration(configuration),
+      buildConfigurationManifest(configuration),
+    ]);
+    expect(built.ok).toBe(true);
+    if (built.ok) {
+      expect(direct).toEqual(built.manifest);
+    }
+  });
+
+  it('hashes without validating, producing a manifest even for an invalid configuration', async () => {
+    const invalid = createEarthBaselineConfiguration();
+    invalid.planetary.massEarthMasses = 0; // would fail validation
+    const manifest = await hashConfiguration(invalid);
+    expect(manifest.hash).toMatch(/^[0-9a-f]{64}$/);
+    expect(manifest.configuration).toBe(invalid);
   });
 });
