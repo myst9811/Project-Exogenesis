@@ -17,7 +17,9 @@ import type { PlanetConfiguration } from '../../types/configuration';
  *     (sidereal day 23.9345 h; obliquity 23.44°; eccentricity 0.0167)
  *   - Atmospheric partial pressures: US Standard Atmosphere 1976 total
  *     (101.325 kPa) × CRC Handbook dry-air molar fractions
- *     (N₂ 78.08%, O₂ 20.95%, Ar 0.93%, CO₂ ~0.04%)
+ *     (N₂ 78.08%, O₂ 20.95%, Ar 0.93%, CO₂ ~0.04%), with a global-mean
+ *     surface water-vapor partial pressure of ~1.3 kPa (≈77% relative
+ *     humidity at 288 K; Hartmann, Global Physical Climatology, 2nd ed.)
  */
 export function createEarthBaselineConfiguration(): PlanetConfiguration {
   return {
@@ -41,10 +43,11 @@ export function createEarthBaselineConfiguration(): PlanetConfiguration {
     },
     atmosphere: {
       partialPressuresKilopascals: {
-        N2: 79.12,
-        O2: 21.22,
-        Ar: 0.95,
+        N2: 78.08,
+        O2: 20.95,
+        Ar: 0.93,
         CO2: 0.04,
+        H2O: 1.3,
       },
     },
   };

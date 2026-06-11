@@ -48,7 +48,7 @@ describe('buildConfigurationManifest', () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.manifest.hash).toBe(
-        'cc2b607f8885241730eec33a86bfb7bed4539deb1f46545d9a79fcf6ba445ff4',
+        '36b20d11f83d2fab5085b4f1141c279010730d5afd1c75de3608321d2d63b068',
       );
     }
   });
@@ -56,7 +56,9 @@ describe('buildConfigurationManifest', () => {
   it('produces identical hashes regardless of configuration key order', async () => {
     const baseline = createEarthBaselineConfiguration();
     const reordered: PlanetConfiguration = {
-      atmosphere: { partialPressuresKilopascals: { CO2: 0.04, Ar: 0.95, O2: 21.22, N2: 79.12 } },
+      atmosphere: {
+        partialPressuresKilopascals: { H2O: 1.3, CO2: 0.04, Ar: 0.93, O2: 20.95, N2: 78.08 },
+      },
       rotation: { axialTiltDegrees: 23.44, rotationPeriodHours: 23.9345 },
       planetary: { compositionClass: 'rocky-silicate', radiusEarthRadii: 1.0, massEarthMasses: 1.0 },
       orbital: { eccentricity: 0.0167, semiMajorAxisAstronomicalUnits: 1.0 },
