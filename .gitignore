@@ -3,3 +3,8 @@ coverage/
 dist/
 *.log
 .DS_Store
+
+# Local environment (may contain API keys) — never commit. .env.example is tracked.
+.env
+.env.local
+.env.*.local
