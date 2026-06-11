@@ -6,29 +6,32 @@ import { describe, expect, it } from 'vitest';
 
 import { translateEscapeVelocity, translateGravity } from './gravity';
 
+/** Earth-gravity ratios expressed as the m/s² the function now expects. */
+const G0 = 9.80665;
+
 describe('translateGravity', () => {
-  it('always anchors to Earth with the ratio', () => {
-    const result = translateGravity(1.0);
+  it('anchors to Earth with the computed ratio', () => {
+    const result = translateGravity(G0); // 1.00 g
     expect(result.earthComparison).toContain("1.00× Earth's surface gravity");
   });
 
   it.each([
-    [0.05, 'Negligible gravity'],
-    [0.3, 'Very low gravity'],
-    [0.7, 'Low gravity'],
-    [1.0, 'Earth-like gravity'],
-    [1.15, 'Earth-like gravity'],
-    [1.3, 'Heavy gravity'],
-    [2.0, 'Very heavy gravity'],
-    [4.0, 'Crushing gravity'],
-  ])('classifies %f g as %s', (gravity, brief) => {
+    [0.05 * G0, 'Negligible gravity'],
+    [0.3 * G0, 'Very low gravity'],
+    [0.7 * G0, 'Low gravity'],
+    [1.0 * G0, 'Earth-like gravity'],
+    [1.15 * G0, 'Earth-like gravity'],
+    [1.3 * G0, 'Heavy gravity'],
+    [2.0 * G0, 'Very heavy gravity'],
+    [4.0 * G0, 'Crushing gravity'],
+  ])('classifies %f m/s² as %s', (gravity, brief) => {
     const result = translateGravity(gravity);
     expect(result.brief).toBe(brief);
     expect(result.narrative.length).toBeGreaterThan(0);
   });
 
   it('reports the multiplier in the very-heavy narrative', () => {
-    expect(translateGravity(2.0).narrative).toContain('2.0 times heavier');
+    expect(translateGravity(2.0 * G0).narrative).toContain('2.0 times heavier');
   });
 });
 
