@@ -57,10 +57,29 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 /**
- * Validates a configuration and, if it passes, produces its manifest.
- * The hash binds the configuration content to the schema version: the same
+ * Produces the manifest for a configuration **without validating it**. The
+ * hash binds the configuration content to the schema version: the same
  * physical world always receives the same identity, and a schema bump
  * yields a new one (migration handled at the URL layer, Phase 8).
+ *
+ * Callers that have not already validated the configuration must use
+ * {@link buildConfigurationManifest} instead. This entry point exists for
+ * the store, which validates once for its full diagnostic list (including
+ * warnings) and then hashes without re-validating.
+ */
+export async function hashConfiguration(
+  configuration: PlanetConfiguration,
+): Promise<ConfigurationManifest> {
+  const canonical = `${PLANETARY_STATE_SCHEMA_VERSION}\n${canonicalizeForHashing(configuration)}`;
+  return {
+    schemaVersion: PLANETARY_STATE_SCHEMA_VERSION,
+    configuration,
+    hash: await sha256Hex(canonical),
+  };
+}
+
+/**
+ * Validates a configuration and, if it passes, produces its manifest.
  */
 export async function buildConfigurationManifest(
   configuration: PlanetConfiguration,
@@ -69,13 +88,5 @@ export async function buildConfigurationManifest(
   if (!validation.valid) {
     return { ok: false, diagnostics: validation.diagnostics };
   }
-  const canonical = `${PLANETARY_STATE_SCHEMA_VERSION}\n${canonicalizeForHashing(configuration)}`;
-  return {
-    ok: true,
-    manifest: {
-      schemaVersion: PLANETARY_STATE_SCHEMA_VERSION,
-      configuration,
-      hash: await sha256Hex(canonical),
-    },
-  };
+  return { ok: true, manifest: await hashConfiguration(configuration) };
 }
