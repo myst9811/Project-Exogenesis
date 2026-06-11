@@ -561,3 +561,91 @@ body {
   border-color: var(--cyan-bright);
   box-shadow: 0 0 0 1px var(--cyan-glow);
 }
+
+/* ── Telemetry readouts ────────────────────────────────────────────────── */
+
+.readouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.readout-card {
+  position: relative;
+  background: var(--void-panel);
+  border: 1px solid var(--border-dim);
+  border-left: 2px solid var(--cyan-dim);
+  padding: 12px 14px 14px;
+}
+
+.readout-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--grid-line);
+}
+
+.readout-label {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.readout-glyph {
+  color: var(--cyan-mid);
+  margin-right: 4px;
+}
+
+.readout-raw {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: var(--text-data);
+  color: var(--text-readout);
+  white-space: nowrap;
+}
+
+.readout-brief {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: var(--cyan-bright);
+}
+
+.readout-instrument {
+  margin: 8px 0 10px;
+}
+
+.gravity-gauge {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.thermal-spectrum {
+  display: block;
+  image-rendering: auto;
+}
+
+.readout-narrative {
+  margin: 0 0 4px;
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.readout-comparison {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-data);
+  color: var(--text-secondary);
+}

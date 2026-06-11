@@ -17,7 +17,9 @@ import {
   translatePressure,
   translateSurfaceTemperature,
 } from '../translation';
+import { GravityGauge } from './GravityGauge';
 import { ReadoutCard } from './ReadoutCard';
+import { ThermalSpectrum } from './ThermalSpectrum';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
 
@@ -47,11 +49,17 @@ export function WorldReadouts(): JSX.Element {
         label="Gravity"
         translation={translateGravity(world.bulk.surfaceGravityMetersPerSecondSquared)}
         rawValue={`${world.bulk.surfaceGravityMetersPerSecondSquared.toFixed(2)} m/s²`}
+        instrument={
+          <GravityGauge
+            surfaceGravityMetersPerSecondSquared={world.bulk.surfaceGravityMetersPerSecondSquared}
+          />
+        }
       />
       <ReadoutCard
         label="Surface Temperature"
         translation={translateSurfaceTemperature(world.climate.surfaceTemperatureKelvin)}
         rawValue={`${Math.round(world.climate.surfaceTemperatureKelvin)} K | ${surfaceCelsius} °C`}
+        instrument={<ThermalSpectrum temperatureKelvin={world.climate.surfaceTemperatureKelvin} />}
       />
       <ReadoutCard
         label="Atmospheric Pressure"
