@@ -158,3 +158,220 @@ body {
     display: none;
   }
 }
+
+/* ── Console shell + layout ────────────────────────────────────────────── */
+
+.console {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 30% -10%, rgba(20, 80, 106, 0.12), transparent 55%),
+    var(--void-deep);
+}
+
+.console-body {
+  display: grid;
+  grid-template-columns: 38% 62%;
+  gap: 1px;
+  background: var(--border-dim);
+  align-items: start;
+}
+
+.parameter-console {
+  background: var(--void-deep);
+  padding: 18px 20px 40px;
+  min-height: calc(100vh - 52px);
+}
+
+.console-thesis {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin: 0 0 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--grid-line);
+}
+
+.visualization-console {
+  background: var(--void-deep);
+  padding: 18px 20px 40px;
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── System header ─────────────────────────────────────────────────────── */
+
+.system-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 52px;
+  background: var(--void-panel);
+  border-bottom: 1px solid var(--border-dim);
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(30, 65, 100, 0.08) 3px,
+    rgba(30, 65, 100, 0.08) 4px
+  );
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.system-logo {
+  font-size: 1.3rem;
+  color: var(--cyan-bright);
+  text-shadow: 0 0 12px var(--cyan-glow);
+}
+
+.system-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--cyan-bright);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.system-subtitle {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--status-unknown);
+}
+
+.status-indicator.status-nominal {
+  background: var(--status-nominal);
+  animation: pulse-nominal 2.4s ease-in-out infinite;
+}
+.status-indicator.status-caution {
+  background: var(--status-caution);
+  animation: pulse-nominal 1.2s ease-in-out infinite;
+}
+.status-indicator.status-critical {
+  background: var(--status-critical);
+}
+
+.status-text {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.tactical-btn {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-dim);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+
+.tactical-btn:hover:not(:disabled) {
+  background: var(--void-hover);
+  border-color: var(--cyan-mid);
+  color: var(--cyan-bright);
+}
+
+.tactical-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.tactical-btn.accent,
+.share-link button {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber-bright);
+  background: transparent;
+  border: 1px solid var(--amber-mid);
+  padding: 5px 12px;
+  cursor: pointer;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  transition: background 0.15s;
+}
+
+.tactical-btn.accent:hover,
+.share-link button:hover {
+  background: var(--amber-glow);
+}
+
+.share-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.share-confirm {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+  color: var(--status-nominal);
+}
+
+.link-error {
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--status-caution);
+  margin: 0;
+  padding: 8px 24px;
+  background: var(--amber-glow);
+  border-bottom: 1px solid var(--border-dim);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan-bright);
+  outline-offset: 2px;
+}

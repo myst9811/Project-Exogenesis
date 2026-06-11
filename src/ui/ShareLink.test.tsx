@@ -16,7 +16,7 @@ describe('ShareLink', () => {
     vi.stubGlobal('navigator', { clipboard: { writeText } });
 
     render(<ShareLink />);
-    fireEvent.click(screen.getByRole('button', { name: 'Copy share link' }));
+    fireEvent.click(screen.getByRole('button', { name: /Share Config/ }));
 
     await waitFor(() => {
       expect(screen.getByRole('status').textContent).toBe('Link copied');
@@ -30,7 +30,7 @@ describe('ShareLink', () => {
     vi.stubGlobal('navigator', { clipboard: { writeText } });
 
     render(<ShareLink />);
-    fireEvent.click(screen.getByRole('button', { name: 'Copy share link' }));
+    fireEvent.click(screen.getByRole('button', { name: /Share Config/ }));
 
     // Give the rejected promise a chance to settle, then assert no confirmation.
     await Promise.resolve();

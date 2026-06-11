@@ -20,12 +20,11 @@ import {
   loadConfigurationToken,
 } from '../store';
 import { DiagnosticsList } from './DiagnosticsList';
-import { HistoryControls } from './HistoryControls';
 import { InputPanels } from './InputPanels';
 import { NarrationPanel } from './NarrationPanel';
 import { PlanetViewport, type PlanetRendererFactory } from './PlanetViewport';
-import { ShareLink } from './ShareLink';
 import { StoresProvider } from './StoresProvider';
+import { SystemHeader } from './SystemHeader';
 import { WorldReadouts } from './WorldReadouts';
 import { readWorldToken, writeWorldToken } from './worldUrl';
 
@@ -74,28 +73,32 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
 
   return (
     <StoresProvider stores={stores}>
-      <main className="app">
-        <header className="app-header">
-          <h1>Project Exogenesis</h1>
-          <p>Set a world&rsquo;s conditions. Science determines its fate.</p>
-          <HistoryControls />
-          <ShareLink />
-          {linkError !== null && (
-            <p className="link-error" role="alert">
-              {linkError} Showing the default world instead.
+      <div className="console">
+        <SystemHeader />
+        {linkError !== null && (
+          <p className="link-error" role="alert">
+            {linkError} Showing the default world instead.
+          </p>
+        )}
+        <main className="console-body">
+          <section className="parameter-console" aria-label="parameters">
+            <p className="console-thesis">
+              Set a world&rsquo;s conditions. Science determines its fate.
             </p>
-          )}
-        </header>
-        <div className="app-body">
-          <InputPanels />
-          <div className="app-view">
-            {createRenderer ? <PlanetViewport createRenderer={createRenderer} /> : <PlanetViewport />}
+            <InputPanels />
+            <DiagnosticsList />
+          </section>
+          <section className="visualization-console" aria-label="visualization">
+            {createRenderer ? (
+              <PlanetViewport createRenderer={createRenderer} />
+            ) : (
+              <PlanetViewport />
+            )}
             <WorldReadouts />
             <NarrationPanel />
-          </div>
-        </div>
-        <DiagnosticsList />
-      </main>
+          </section>
+        </main>
+      </div>
     </StoresProvider>
   );
 }
