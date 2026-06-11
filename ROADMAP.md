@@ -70,9 +70,9 @@ Each calculation lands as its own commit pair (implementation + tests), each wit
 
 ## Phase 4 — Translation Layer
 
-- [ ] One pure `translate<Quantity>` function per physical dimension (gravity, day length, temperature, pressure, escape velocity, orbital period, magnetic field)
-- [ ] `HumanTranslation` interface: brief, narrative, Earth comparison
-- [ ] 100% line coverage; raw values always preserved alongside translations
+- [x] One pure `translate<Quantity>` function per physical dimension (gravity, day length, temperature, pressure, escape velocity, orbital period, magnetic field)
+- [x] `HumanTranslation` interface: brief, narrative, Earth comparison
+- [x] 100% line coverage; raw values always preserved alongside translations
 
 ## Phase 5 — Store & UI Inputs
 
