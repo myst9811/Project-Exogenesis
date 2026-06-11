@@ -75,10 +75,29 @@ Where `.claude/CLAUDE.md` and `docs/ARCHITECTURE.md` diverge, CLAUDE.md governs 
 
 **Decision:** Post-MVP engines (evolution, civilization, terraforming) register through a version-checked interface contract (ARCHITECTURE.md §5) and attach only at sanctioned hook points. Terraforming specifically operates as middleware between configuration and physics — it mutates *inputs over time*, preserving the physics engine as a pure function and the unidirectional data flow as absolute.
 
+## TD-014 — Habitability scoring: independent physical factors, limiting-factor aggregation, honest confidence
+
+**Decision:** Habitability is a **separate downstream engine** (ARCHITECTURE.md §3.4) that consumes the immutable `PlanetaryState` and returns a structured `HabitabilityAssessment` — never a boolean, and never folded into `PlanetaryState` itself. It is computed by the physics layer, not the AI layer (CLAUDE.md §7 permits engine-computed scores; it forbids only AI-generated ones).
+
+A survival score is decomposed into **independent physical factors**, each scoring one axis (thermal, total pressure, breathable O₂ partial pressure, CO₂ toxicity, gravity) against documented human-physiology tolerances. Factors aggregate **multiplicatively** — the overall survivability is the product of factor scores, scaled to [0, 100] — so a single lethal axis (vacuum, 700 K) drives the world to zero regardless of the others. This is the conservative choice CLAUDE.md §6 and VISION.md demand: a weighted *sum* could mask a lethal condition behind favorable ones, producing a false positive. The assessment also names the **limiting factor** (lowest-scoring axis), which is what the educational UI surfaces ("liquid water could exist — but the air is unbreathable").
+
+Liquid-water availability is reported as its **own field**, not folded into acute survivability: a human carries water, so its absence is not instantly lethal, but it is the centerpiece of the habitability story (VISION journey 3). Its boiling point comes from Clausius–Clapeyron (first-principles thermodynamics with constant latent heat).
+
+**Confidence labeling (CLAUDE.md §6).** Every factor and every score carries a `calculated | estimated | speculative` label. Aggregate scores are **never** `calculated`: the aggregation is an explicit heuristic, so the highest a survival score claims is `estimated`. Per-factor: thermal/pressure/O₂/CO₂ tolerances are `estimated` (well-characterized physiology applied to computed physics); gravity tolerance is `speculative` (only ~0 g and 1 g human data exist — everything between is extrapolation). The overall confidence of a survival assessment is reported as the confidence of its *limiting* factor, since that is the axis actually driving the number.
+
+**Rationale:** Scoring is the project's highest scientific-integrity risk. Decomposition keeps each judgment small, individually defensible, and individually labeled; multiplicative aggregation encodes conservatism structurally rather than by tuning; honest confidence labels keep the heuristic from masquerading as first-principles physics.
+
+**Consequences.** *Easier:* the Evolution module gets the structured, factor-level output it requires; the UI can explain *why* a world is hostile; adding the Extremophile and Silicon-based models (ARCHITECTURE.md §3.4) means adding model configurations, not rewriting aggregation. *Harder:* multiplicative scores are less intuitive than averages and compound sub-optimal factors aggressively — deliberate, but it means a "70% survivable" world is genuinely marginal on every axis.
+
+**Alternatives considered:** weighted-sum scoring (rejected — masks lethal factors, the exact false-positive VISION forbids); a single boolean habitable flag (rejected — the Evolution module needs structure, CLAUDE.md §16); folding the assessment into `PlanetaryState` (rejected — it is a pure function of state and need not be serialized; keeping it separate matches the architecture's downstream-engine topology).
+
 ---
 
 ## Open questions (to be resolved as ADRs before the relevant phase)
 
 1. **Store library** (Phase 5): minimal hand-rolled store vs. Zustand-class library — decide against bundle budget and immutability ergonomics.
-2. **Greenhouse forcing model** (Phase 2): which published simplified radiative forcing parameterization satisfies "not linear interpolation of temperature" while staying within MVP scope — requires literature selection and citation.
-3. **Deterministic transcendental functions** (Phase 8): whether URL-shared worlds need bitwise-identical recomputation across browsers or tolerance-based equality suffices.
+2. **Deterministic transcendental functions** (Phase 8): whether URL-shared worlds need bitwise-identical recomputation across browsers or tolerance-based equality suffices.
+
+## Resolved
+
+- **Greenhouse forcing model** (Phase 2): resolved in commit `512bbb8` — a gray two-stream model (Pierrehumbert 2010) with per-gas optical depths scaling as √p (strong-line curve of growth) and a pressure-broadening factor, calibrated to Earth and validated against Venus and Mars. Satisfies the "not linear interpolation of temperature" requirement; citations in `docs/references.md`.
