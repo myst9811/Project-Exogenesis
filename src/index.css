@@ -649,3 +649,114 @@ body {
   letter-spacing: var(--tracking-data);
   color: var(--text-secondary);
 }
+
+/* ── Planet viewport + HUD ─────────────────────────────────────────────── */
+
+.viewport-frame {
+  position: relative;
+  border: 1px solid var(--border-dim);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(20, 80, 106, 0.1), transparent 60%),
+    var(--void-absolute);
+  overflow: hidden;
+}
+
+.viewport-frame::before,
+.viewport-frame::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  z-index: 3;
+  pointer-events: none;
+}
+.viewport-frame::before {
+  top: 6px;
+  left: 6px;
+  border-top: 1px solid var(--cyan-mid);
+  border-left: 1px solid var(--cyan-mid);
+}
+.viewport-frame::after {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 1px solid var(--cyan-mid);
+  border-right: 1px solid var(--cyan-mid);
+}
+
+.planet-viewport {
+  display: block;
+  width: 100%;
+  height: 380px;
+}
+
+.viewport-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hud-corner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-data);
+  text-transform: uppercase;
+}
+.hud-top-left {
+  top: 12px;
+  left: 14px;
+}
+.hud-top-right {
+  top: 12px;
+  right: 14px;
+  text-align: right;
+}
+.hud-bottom-left {
+  bottom: 12px;
+  left: 14px;
+}
+.hud-bottom-right {
+  bottom: 12px;
+  right: 14px;
+  text-align: right;
+}
+
+.hud-key,
+.hud-line {
+  color: var(--cyan-dim);
+}
+
+.hud-value {
+  color: var(--cyan-bright);
+  font-size: var(--text-caption);
+}
+
+.hud-delta {
+  color: var(--amber-bright);
+  animation: value-flash 0.5s ease-out;
+}
+
+@keyframes hud-ring-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.hud-scan-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  max-width: 82%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 1px dashed var(--cyan-dim);
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: hud-ring-spin 90s linear infinite;
+}
