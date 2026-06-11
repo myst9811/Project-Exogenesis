@@ -42,7 +42,13 @@ describe('HistoryControls', () => {
     await waitFor(() => {
       expect(stores.simulation.getState().configuration?.planetary.massEarthMasses).toBe(1);
     });
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Redo' }).disabled).toBe(false);
+
+    const redo = screen.getByRole<HTMLButtonElement>('button', { name: 'Redo' });
+    expect(redo.disabled).toBe(false);
+    fireEvent.click(redo);
+    await waitFor(() => {
+      expect(stores.simulation.getState().configuration?.planetary.massEarthMasses).toBe(2);
+    });
   });
 
   it('shows the simulation status', async () => {
