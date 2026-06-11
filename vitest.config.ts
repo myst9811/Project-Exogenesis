@@ -10,7 +10,15 @@ export default defineConfig({
       // requires a WebGL context jsdom cannot provide and whose visual
       // output is explicitly out of scope for unit tests (CLAUDE.md §11).
       // The renderer's pure derivation layer (src/renderer/*.ts) is gated.
-      exclude: ['src/**/*.test.ts', 'src/types/**', 'src/renderer/scene/**'],
+      // Excluded I/O boundaries: type-only files, the WebGL scene (needs a
+      // GL context), and the AI provider adapters (network + SDK). Their
+      // pure cores are gated; the boundaries are verified by build/runtime.
+      exclude: [
+        'src/**/*.test.ts',
+        'src/types/**',
+        'src/renderer/scene/**',
+        'src/ai/providers/**',
+      ],
       thresholds: {
         'src/physics/**/*.ts': {
           lines: 100,
