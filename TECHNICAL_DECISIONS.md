@@ -109,9 +109,10 @@ Liquid-water availability is reported as its **own field**, not folded into acut
 
 ## Open questions (to be resolved as ADRs before the relevant phase)
 
-1. **Deterministic transcendental functions** (Phase 8): whether URL-shared worlds need bitwise-identical recomputation across browsers or tolerance-based equality suffices.
+_None open._
 
 ## Resolved
 
+- **Deterministic transcendental functions** (Phase 8): resolved in [ADR-007](docs/adr/007-shareable-world-url-format.md) — bitwise-identical cross-browser recomputation is **not** required. A world's identity is the hash of its *inputs*, which is unaffected by last-bit transcendental-function differences; the shared URL encodes inputs and the engine recomputes deterministically (IEEE 754 binary64 arithmetic, TD-002). Value equality of the decoded configuration is the contract, not bitwise-identical state.
 - **Store library** (Phase 5): resolved in [ADR-005](docs/adr/005-hand-rolled-store.md) — hand-rolled framework-agnostic pub/sub store in pure TS, no runtime dependency. The dependency policy (CLAUDE.md §17, "implement anything <50 lines") is near-determinative; Zustand's value is React-coupled and belongs in `ui/`, not `store/`. React itself is deferred to Phase 6.
 - **Greenhouse forcing model** (Phase 2): resolved in commit `512bbb8` — a gray two-stream model (Pierrehumbert 2010) with per-gas optical depths scaling as √p (strong-line curve of growth) and a pressure-broadening factor, calibrated to Earth and validated against Venus and Mars. Satisfies the "not linear interpolation of temperature" requirement; citations in `docs/references.md`.

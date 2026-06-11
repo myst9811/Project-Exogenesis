@@ -110,11 +110,12 @@ The framework-agnostic store core is complete; the store-library question is res
 - [x] Async execution with loading states; AI output typed as `AIContent` with kind labels
 - [x] Provider-agnostic `NarrationClient` (TD-008) with a live Gemini adapter; narration disabled gracefully when no key is configured
 
-## Phase 8 — Shareable World URLs
+## Phase 8 — Shareable World URLs ([ADR-007](docs/adr/007-shareable-world-url-format.md))
 
-- [ ] Deterministic serialization of inputs (`ConfigurationManifest`) into a URL
-- [ ] Schema version embedded; migration layer for old URLs from the start
-- [ ] Round-trip property test: URL → state → URL is identity
+- [x] Deterministic serialization of inputs into a URL (base64url `{v,c}` envelope, sharing the manifest's canonical form)
+- [x] Schema version embedded; version-keyed migration chain shipped from the start (empty at 0.1.0, with a cycle guard)
+- [x] Round-trip property test: token → config → token identity, plus every decode failure mode
+- [x] UI sync: load a shared world on open (graceful fallback on an invalid link), reflect every computed world into the URL, and a copy-link affordance
 
 ---
 
