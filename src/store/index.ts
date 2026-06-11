@@ -32,3 +32,16 @@ export {
   undoHistory,
 } from './history';
 export type { HistoryState, HistoryStore } from './history';
+
+export {
+  commitConfiguration,
+  createAppStores,
+  redoConfiguration,
+  undoConfiguration,
+} from './app';
+export type { AppStores } from './app';
+
+// The default world the UI seeds with. Re-exported through the store so the
+// UI obtains it via its sanctioned gateway rather than importing physics
+// directly (CLAUDE.md §4).
+export { createEarthBaselineConfiguration as createDefaultConfiguration } from '../physics/configuration/earthBaseline';
