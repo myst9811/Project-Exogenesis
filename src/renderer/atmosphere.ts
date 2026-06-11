@@ -14,6 +14,7 @@
 
 import type { ColorRGB } from '../types/render';
 import type { AtmosphereRenderParameters } from '../types/render';
+import { clamp01 } from './color';
 
 /** Representative RGB wavelengths in nanometres (sRGB primaries, approx). */
 const WAVELENGTH_RED_NM = 700;
@@ -22,12 +23,6 @@ const WAVELENGTH_BLUE_NM = 440;
 
 /** One standard atmosphere in kPa (definitional), the opacity reference. */
 const EARTH_SURFACE_PRESSURE_KILOPASCALS = 101.325;
-
-function clamp01(value: number): number {
-  if (value < 0) return 0;
-  if (value > 1) return 1;
-  return value;
-}
 
 /** Relative Rayleigh scattering efficiency at a wavelength (∝ 1/λ⁴). */
 function rayleighWeight(wavelengthNm: number): number {

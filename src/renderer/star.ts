@@ -11,16 +11,11 @@
  */
 
 import type { ColorRGB } from '../types/render';
+import { clamp01 } from './color';
 
 /** Valid domain of the blackbody-color approximation (Kelvin). */
 const MIN_BLACKBODY_KELVIN = 1000;
 const MAX_BLACKBODY_KELVIN = 40_000;
-
-function clamp01(value: number): number {
-  if (value < 0) return 0;
-  if (value > 1) return 1;
-  return value;
-}
 
 /**
  * Approximates the sRGB color of a blackbody at a given temperature.

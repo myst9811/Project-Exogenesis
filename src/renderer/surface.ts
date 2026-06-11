@@ -13,6 +13,7 @@
 
 import type { PlanetCompositionClass } from '../types/configuration';
 import type { ColorRGB } from '../types/render';
+import { clamp01 } from './color';
 
 /**
  * Representational base hues per composition class (sRGB, [0, 1]). Chosen to
@@ -25,12 +26,6 @@ const COMPOSITION_BASE_COLOR: Record<PlanetCompositionClass, ColorRGB> = {
   'water-world': { r: 0.2, g: 0.42, b: 0.68 },
   'gas-dwarf': { r: 0.78, g: 0.74, b: 0.62 },
 };
-
-function clamp01(value: number): number {
-  if (value < 0) return 0;
-  if (value > 1) return 1;
-  return value;
-}
 
 /**
  * Derives surface color: the composition's base hue scaled by a brightness
