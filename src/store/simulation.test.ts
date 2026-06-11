@@ -102,6 +102,32 @@ describe('createSimulationStore', () => {
     expect(store.getState().planetaryState).toBe(denserWorld.planetaryState);
   });
 
+  it('drops a stale failure when a newer submission already succeeded', async () => {
+    const earth = createEarthBaselineConfiguration();
+    const denser = createEarthBaselineConfiguration();
+    denser.planetary.massEarthMasses = 2;
+    const denserWorld = await realWorld(denser);
+
+    const pending: { resolve: (w: ComputedWorld) => void; reject: (e: Error) => void }[] = [];
+    const store = createSimulationStore({
+      computeWorld: () =>
+        new Promise<ComputedWorld>((resolve, reject) => {
+          pending.push({ resolve, reject });
+        }),
+    });
+
+    const first = store.applyConfiguration(earth);
+    const second = store.applyConfiguration(denser);
+
+    pending[1]?.resolve(denserWorld);
+    await second;
+    pending[0]?.reject(new Error('late failure')); // stale — must be ignored
+    await first;
+
+    expect(store.getState().status).toBe('ready');
+    expect(store.getState().planetaryState).toBe(denserWorld.planetaryState);
+  });
+
   it('catches a physics failure after validation and reports an error diagnostic', async () => {
     const store = createSimulationStore({
       computeWorld: () => Promise.reject(new Error('domain exceeded')),
