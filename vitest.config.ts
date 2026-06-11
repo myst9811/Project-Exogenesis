@@ -6,7 +6,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],
-      exclude: ['src/**/*.test.ts', 'src/types/**'],
+      // Excluded: type-only files, and the Three.js scene wiring, which
+      // requires a WebGL context jsdom cannot provide and whose visual
+      // output is explicitly out of scope for unit tests (CLAUDE.md §11).
+      // The renderer's pure derivation layer (src/renderer/*.ts) is gated.
+      exclude: ['src/**/*.test.ts', 'src/types/**', 'src/renderer/scene/**'],
       thresholds: {
         'src/physics/**/*.ts': {
           lines: 100,
