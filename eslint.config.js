@@ -19,6 +19,9 @@ export default tseslint.config(
       // Physics error messages and diagnostics interpolate numeric values
       // constantly; numbers stringify unambiguously.
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      // Allow intentionally-unused args/vars prefixed with `_` (e.g. a fake
+      // that must declare a parameter to record it but does not read it).
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-console': 'error',
       'no-debugger': 'error',
       'prefer-const': 'error',
