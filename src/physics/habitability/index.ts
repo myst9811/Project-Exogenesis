@@ -19,7 +19,10 @@
  * Future work:
  *   - Mass-dependent runaway greenhouse limits (Kopparapu et al. 2014
  *     5 M⊕ / 0.1 M⊕ coefficient sets)
- *   - Structured habitability scoring (Phase 3)
+ *
+ * The structured survival and liquid-water assessment (the Habitability
+ * Engine of ARCHITECTURE.md §3.4) lives in ./survival and ./water,
+ * re-exported below.
  */
 
 import type { HabitableZonePosition } from '../../types/physics';
@@ -191,3 +194,9 @@ export function classifyHabitableZonePosition(
   }
   return 'too-cold';
 }
+
+export { computeWaterBoilingPoint, assessLiquidWater } from './water';
+export {
+  assessHabitability,
+  assessHumanBaselineSurvival,
+} from './survival';
