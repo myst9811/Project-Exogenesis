@@ -180,8 +180,11 @@ export default tseslint.config(
                 '**/ai',
                 '**/ai/**',
                 '!**/types/ai',
-                '**/ui',
-                '**/ui/**',
+                // Parent-relative so these match the sibling React UI layer
+                // (src/ui) without catching store's own `store/ui.ts`
+                // module, whose self-import is `./ui` (CLAUDE.md §3 names it).
+                '../ui',
+                '../ui/**',
               ],
               message:
                 'store/ mediates between UI inputs and the physics engine: it may invoke physics, but never renderer/, ai/, or ui/.',
