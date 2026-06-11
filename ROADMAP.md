@@ -52,13 +52,13 @@ Establish the engineering substrate required by the pre-commit checklist before 
 
 Each calculation lands as its own commit pair (implementation + tests), each with full JSDoc model documentation per CLAUDE.md §5.
 
-- [ ] **Stellar:** main-sequence mass–luminosity relation, effective temperature, stellar radius
-- [ ] **Orbital:** Keplerian orbital period from semi-major axis and stellar mass
-- [ ] **Planetary:** surface gravity, bulk density, escape velocity
-- [ ] **Climate:** equilibrium (blackbody) temperature via energy balance model; simplified greenhouse forcing delta
-- [ ] **Atmosphere:** mean molecular weight, scale height, surface pressure, Jeans escape retention analysis
-- [ ] **Habitable zone:** Kopparapu et al. (2013) HZ limits and planet position within them
-- [ ] Engine orchestrator: inputs → complete immutable `PlanetaryState`
+- [x] **Stellar:** main-sequence mass–luminosity relation, effective temperature, stellar radius
+- [x] **Orbital:** Keplerian orbital period from semi-major axis and stellar mass
+- [x] **Planetary:** surface gravity, bulk density, escape velocity
+- [x] **Climate:** equilibrium (blackbody) temperature via energy balance model; simplified greenhouse forcing delta
+- [x] **Atmosphere:** mean molecular weight, scale height, surface pressure, Jeans escape retention analysis
+- [x] **Habitable zone:** Kopparapu et al. (2013) HZ limits and planet position within them
+- [x] Engine orchestrator: inputs → complete immutable `PlanetaryState`
 
 **Test bar per function:** Earth-analogue case, boundary conditions, edge cases, and at least one published exoplanet case with citation (CLAUDE.md §11).
 
