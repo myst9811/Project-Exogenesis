@@ -55,6 +55,8 @@ Where `.claude/CLAUDE.md` and `docs/ARCHITECTURE.md` diverge, CLAUDE.md governs 
 
 **Deferred:** ARCHITECTURE.md §3.5's MCP + local-vector-database RAG design is post-MVP; the MVP narrator needs only the state snapshot as context. The prompt-versioning and read-only contracts are designed so the RAG upgrade changes retrieval, not architecture.
 
+**Provider (resolved in Phase 7):** see [TD-015](#td-015--ai-provider-google-gemini-via-the-provider-agnostic-client).
+
 ## TD-009 — Habitability output: structured matrix, never a boolean or single score
 
 **Decision:** The habitability module returns a structured result: per-model scores (human baseline first; extremophile and speculative models later per ARCHITECTURE.md §3.4), contributing factors, confidence labels, and caveats. Required pre-commitment for the Evolution module (CLAUDE.md §16). Conservative bias: under uncertainty, prefer false negatives for habitability.
@@ -90,6 +92,18 @@ Liquid-water availability is reported as its **own field**, not folded into acut
 **Consequences.** *Easier:* the Evolution module gets the structured, factor-level output it requires; the UI can explain *why* a world is hostile; adding the Extremophile and Silicon-based models (ARCHITECTURE.md §3.4) means adding model configurations, not rewriting aggregation. *Harder:* multiplicative scores are less intuitive than averages and compound sub-optimal factors aggressively — deliberate, but it means a "70% survivable" world is genuinely marginal on every axis.
 
 **Alternatives considered:** weighted-sum scoring (rejected — masks lethal factors, the exact false-positive VISION forbids); a single boolean habitable flag (rejected — the Evolution module needs structure, CLAUDE.md §16); folding the assessment into `PlanetaryState` (rejected — it is a pure function of state and need not be serialized; keeping it separate matches the architecture's downstream-engine topology).
+
+## TD-015 — AI provider: Google Gemini via the provider-agnostic client
+
+**Decision:** The narration layer's live provider is **Google Gemini** (Gemini Developer API / Google AI Studio), called through the `@google/genai` SDK, defaulting to `gemini-2.5-flash` (configurable). It implements the provider-agnostic `NarrationClient` interface from TD-008 — so the prompts, `AIContent` typing, and narrator/educator/speculator orchestration are provider-independent and fully tested against a fake; only the thin `ai/providers/gemini.ts` adapter knows the SDK.
+
+**Rationale:** The project owner chose Gemini's free tier (1,500 req/day on Flash, no card) over a paid provider for a cost-sensitive public web app. This overrides the environment's "default to the latest Claude model" guidance — an explicit owner decision outranks a default. CLAUDE.md §7 and ADR-003 are **provider-independent**: they govern AI *behavior* (read-only, never generates simulation values, versioned prompts, typed/labeled output), all of which hold regardless of which model runs behind the interface. TD-008's provider-agnostic design is what makes this a one-adapter choice rather than a rewrite.
+
+**Browser key exposure (accepted, documented):** ARCHITECTURE.md §1 specifies a single-page client with no server runtime, but a browser cannot hold a secret — any API key shipped to the client is readable via devtools. The free tier caps the *cost* of abuse, not the *exposure*. For the MVP this is accepted as a bring-your-own-key / personal-free-tier-key model: the key is supplied at runtime via an env var (`VITE_GOOGLE_AI_API_KEY`), never committed, and the narration feature is disabled when absent. A public production deployment would route through a thin proxy that holds the key server-side — the `NarrationClient` interface already accommodates that (swap the adapter's base call for a proxy fetch) without touching the core.
+
+**Consequences.** *Easier:* zero-cost narration for development and low-traffic use; provider swap is one adapter file. *Harder:* the free tier's rate limits (15 RPM) require the UI to handle throttling/errors gracefully; bitwise-deterministic narration is impossible (LLM output is non-deterministic), so narration is never part of the world's identity and is never tested for content (§11).
+
+**Alternatives considered:** Anthropic Claude (the environment default; rejected by the owner on cost for this use case); interface-only with no live provider (rejected — the owner wants working narration now, and the free tier removes the cost blocker).
 
 ---
 
