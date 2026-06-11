@@ -14,10 +14,10 @@ import * as physicsPlanetary from './physics/planetary';
 import * as physicsAtmosphere from './physics/atmosphere';
 import * as physicsClimate from './physics/climate';
 import * as physicsHabitability from './physics/habitability';
-import * as rendererPlanet from './renderer/planet';
+import * as rendererSurface from './renderer/surface';
 import * as rendererAtmosphere from './renderer/atmosphere';
-import * as rendererSky from './renderer/sky';
-import * as rendererSpace from './renderer/space';
+import * as rendererStar from './renderer/star';
+import * as rendererParameters from './renderer/parameters';
 import * as ai from './ai';
 import * as aiPrompts from './ai/prompts';
 import * as translation from './translation';
@@ -32,10 +32,14 @@ const moduleMap = {
   'physics/atmosphere': physicsAtmosphere,
   'physics/climate': physicsClimate,
   'physics/habitability': physicsHabitability,
-  'renderer/planet': rendererPlanet,
+  // Renderer organized as a pure derivation layer (ADR-006); the §3
+  // subsystems map to these modules (planet→surface, atmosphere, stellar
+  // disk→star) plus the Three.js scene, which needs WebGL and is not
+  // import-smoke-tested here.
+  'renderer/surface': rendererSurface,
   'renderer/atmosphere': rendererAtmosphere,
-  'renderer/sky': rendererSky,
-  'renderer/space': rendererSpace,
+  'renderer/star': rendererStar,
+  'renderer/parameters': rendererParameters,
   ai: ai,
   'ai/prompts': aiPrompts,
   translation: translation,
