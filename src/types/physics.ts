@@ -64,7 +64,7 @@ export interface AtmosphericState {
   /** Isothermal scale height; null for an airless world. */
   scaleHeightMeters: number | null;
   /** Jeans escape outlook per present gas. */
-  gasRetention: GasRetentionResult[];
+  gasRetention: readonly GasRetentionResult[];
 }
 
 /** Computed energy-budget properties. */
