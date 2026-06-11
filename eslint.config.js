@@ -230,4 +230,17 @@ export default tseslint.config(
       ],
     },
   },
+
+  // ── Test files may cross module boundaries ──
+  // The architectural import boundaries (above) protect the production
+  // dependency graph and bundle. Test files are not part of that graph and
+  // legitimately import across layers to build realistic fixtures (e.g. a
+  // renderer test computing a real PlanetaryState via the physics engine).
+  // This override applies last so it supersedes the boundary rules.
+  {
+    files: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    rules: {
+      'no-restricted-imports': 'off',
+    },
+  },
 );
