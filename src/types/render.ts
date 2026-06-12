@@ -44,3 +44,37 @@ export interface RenderParameters {
   planet: PlanetRenderParameters;
   atmosphere: AtmosphereRenderParameters;
 }
+
+/**
+ * The complete uniform set the planet shader consumes. Every field is derived
+ * from computed physics by `deriveShaderUniforms` (CLAUDE.md §8). Colors are
+ * sRGB in [0, 1]; fractions are clamped to [0, 1] unless noted.
+ */
+export interface PlanetShaderUniforms {
+  /** Base surface palette from composition × bond albedo. */
+  surfaceColorRgb: ColorRGB;
+  /** Polar-ice extent, 0 (none) → 1 (snowball), from surface temperature. */
+  iceFraction: number;
+  /** Sea level threshold, 0 (no oceans) → ~0.85, gated by liquid-water + water. */
+  oceanLevel: number;
+  /** Emissive lava strength, 0 → 1, when scorching. */
+  moltenFactor: number;
+  /** Deterministic procedural-terrain seed from the configuration hash. */
+  terrainSeed: number;
+  /** Relief amplitude, 0 (smooth) → 1 (rugged), from composition. */
+  terrainRoughness: number;
+  /** False for an airless world. */
+  atmospherePresent: boolean;
+  /** Rayleigh tint of the stellar spectrum (limb glow color). */
+  skyColorRgb: ColorRGB;
+  /** Atmospheric column depth, 0 → 1, from surface pressure. */
+  atmosphereThickness: number;
+  /** Cloud cover, 0 → 1, from water vapor × pressure. */
+  cloudDensity: number;
+  /** Blackbody star color. */
+  starColorRgb: ColorRGB;
+  /** Star apparent angular radius in radians (sizes the disc). */
+  starAngularRadius: number;
+  /** Visual spin in rad/s; sign sets prograde/retrograde. */
+  spinRadiansPerSecond: number;
+}
