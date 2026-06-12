@@ -1,9 +1,9 @@
 /**
  * @module ui/HistoryControls
  *
- * Undo/redo controls plus the live simulation status. Reads the history and
- * simulation stores reactively so the buttons enable and disable as the
- * timeline changes, and dispatches the coordinated undo/redo actions.
+ * Undo/redo controls. Reads the history store reactively so the buttons
+ * enable and disable as the timeline changes, and dispatches the coordinated
+ * undo/redo actions. The live simulation status lives in {@link SystemStatus}.
  */
 
 import type { JSX } from 'react';
@@ -15,31 +15,29 @@ import { useStores } from './StoresProvider';
 export function HistoryControls(): JSX.Element {
   const stores = useStores();
   const history = useStore(stores.history);
-  const simulation = useStore(stores.simulation);
 
   return (
     <div className="history-controls" role="toolbar" aria-label="history">
       <button
         type="button"
+        className="tactical-btn"
         disabled={history.past.length === 0}
         onClick={() => {
           void undoConfiguration(stores);
         }}
       >
-        Undo
+        ↩ Undo
       </button>
       <button
         type="button"
+        className="tactical-btn"
         disabled={history.future.length === 0}
         onClick={() => {
           void redoConfiguration(stores);
         }}
       >
-        Redo
+        ↪ Redo
       </button>
-      <span className="sim-status" aria-label="status">
-        {simulation.status}
-      </span>
     </div>
   );
 }

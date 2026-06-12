@@ -25,11 +25,12 @@ export function ShareLink(): JSX.Element {
     <span className="share-link">
       <button
         type="button"
+        className="tactical-btn accent"
         onClick={() => {
           void copy();
         }}
       >
-        Copy share link
+        ⊕ Share Config
       </button>
       {copied && (
         <span className="share-confirm" role="status">

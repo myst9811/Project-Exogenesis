@@ -19,8 +19,8 @@ describe('HistoryControls', () => {
         <HistoryControls />
       </StoresProvider>,
     );
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Undo' }).disabled).toBe(true);
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Redo' }).disabled).toBe(true);
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: /Undo/ }).disabled).toBe(true);
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: /Redo/ }).disabled).toBe(true);
   });
 
   it('enables undo after a second commit and reverts on click', async () => {
@@ -35,7 +35,7 @@ describe('HistoryControls', () => {
         <HistoryControls />
       </StoresProvider>,
     );
-    const undo = screen.getByRole<HTMLButtonElement>('button', { name: 'Undo' });
+    const undo = screen.getByRole<HTMLButtonElement>('button', { name: /Undo/ });
     expect(undo.disabled).toBe(false);
 
     fireEvent.click(undo);
@@ -43,22 +43,11 @@ describe('HistoryControls', () => {
       expect(stores.simulation.getState().configuration?.planetary.massEarthMasses).toBe(1);
     });
 
-    const redo = screen.getByRole<HTMLButtonElement>('button', { name: 'Redo' });
+    const redo = screen.getByRole<HTMLButtonElement>('button', { name: /Redo/ });
     expect(redo.disabled).toBe(false);
     fireEvent.click(redo);
     await waitFor(() => {
       expect(stores.simulation.getState().configuration?.planetary.massEarthMasses).toBe(2);
     });
-  });
-
-  it('shows the simulation status', async () => {
-    const stores = createAppStores();
-    await commitConfiguration(stores, createDefaultConfiguration());
-    render(
-      <StoresProvider stores={stores}>
-        <HistoryControls />
-      </StoresProvider>,
-    );
-    expect(screen.getByLabelText('status').textContent).toBe('ready');
   });
 });

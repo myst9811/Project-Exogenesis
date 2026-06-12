@@ -23,6 +23,7 @@ import type {
   SpectralClass,
 } from '../types/configuration';
 import { NumberField } from './NumberField';
+import { TacticalPanel } from './TacticalPanel';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
 
@@ -41,8 +42,7 @@ export function InputPanels(): JSX.Element | null {
 
   return (
     <form className="input-panels" aria-label="world parameters">
-      <fieldset>
-        <legend>Star</legend>
+      <TacticalPanel index={0} eyebrow="Subsystem 01" title="Stellar Data">
         <label className="select-field">
           <span className="field-label">Spectral class</span>
           <select
@@ -82,10 +82,9 @@ export function InputPanels(): JSX.Element | null {
             apply({ ...config, stellar: { ...config.stellar, ageGigayears } });
           }}
         />
-      </fieldset>
+      </TacticalPanel>
 
-      <fieldset>
-        <legend>Orbit</legend>
+      <TacticalPanel index={1} eyebrow="Subsystem 02" title="Orbital Parameters">
         <NumberField
           label="Semi-major axis"
           unit="AU"
@@ -106,10 +105,9 @@ export function InputPanels(): JSX.Element | null {
             apply({ ...config, orbital: { ...config.orbital, eccentricity } });
           }}
         />
-      </fieldset>
+      </TacticalPanel>
 
-      <fieldset>
-        <legend>Planet</legend>
+      <TacticalPanel index={2} eyebrow="Subsystem 03" title="Planetary Body">
         <NumberField
           label="Mass"
           unit="M⊕"
@@ -151,10 +149,9 @@ export function InputPanels(): JSX.Element | null {
             ))}
           </select>
         </label>
-      </fieldset>
+      </TacticalPanel>
 
-      <fieldset>
-        <legend>Rotation</legend>
+      <TacticalPanel index={3} eyebrow="Subsystem 04" title="Rotation">
         <NumberField
           label="Rotation period"
           unit="h"
@@ -175,10 +172,10 @@ export function InputPanels(): JSX.Element | null {
             apply({ ...config, rotation: { ...config.rotation, axialTiltDegrees } });
           }}
         />
-      </fieldset>
+      </TacticalPanel>
 
-      <fieldset>
-        <legend>Atmosphere (partial pressures)</legend>
+      <TacticalPanel index={4} eyebrow="Subsystem 05" title="Atmospheric Composition">
+        <p className="panel-note">Partial pressures · kPa</p>
         {ATMOSPHERIC_GASES.map((gas: AtmosphericGas) => (
           <NumberField
             key={gas}
@@ -200,7 +197,7 @@ export function InputPanels(): JSX.Element | null {
             }}
           />
         ))}
-      </fieldset>
+      </TacticalPanel>
     </form>
   );
 }

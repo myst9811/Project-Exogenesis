@@ -36,7 +36,7 @@ describe('App', () => {
     });
     expect(screen.getByText('Temperate')).toBeTruthy();
     expect(screen.getByLabelText('world parameters')).toBeTruthy();
-    expect(screen.getByLabelText('status').textContent).toBe('ready');
+    expect(screen.getByLabelText('status').getAttribute('data-status')).toBe('ready');
   });
 
   it('reflects the computed world into the URL after seeding', async () => {
