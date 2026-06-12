@@ -36,4 +36,21 @@ describe('WorldReadouts', () => {
     expect(screen.getByText('Earth-like pressure')).toBeTruthy();
     expect(screen.getByText('Earth-like year')).toBeTruthy();
   });
+
+  it('surfaces the computed habitability and atmosphere instruments for Earth', async () => {
+    const stores = createAppStores();
+    await commitConfiguration(stores, createDefaultConfiguration());
+    render(
+      <StoresProvider stores={stores}>
+        <WorldReadouts />
+      </StoresProvider>,
+    );
+    // Habitability gauge fed from the real Phase-3 engine (Earth → readily survivable).
+    expect(screen.getByText(/Readily survivable/)).toBeTruthy();
+    expect(screen.getByRole('img', { name: /Survivability \d+ of 100/ })).toBeTruthy();
+    // Atmosphere bar from the real partial pressures (Earth → N2-dominant).
+    expect(screen.getByLabelText(/Atmosphere composition/).getAttribute('aria-label')).toContain(
+      'N2',
+    );
+  });
 });

@@ -20,9 +20,9 @@ import type {
   AtmosphericGas,
   PlanetCompositionClass,
   PlanetConfiguration,
-  SpectralClass,
 } from '../types/configuration';
 import { NumberField } from './NumberField';
+import { SpectralClassSelector } from './SpectralClassSelector';
 import { TacticalPanel } from './TacticalPanel';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
@@ -45,21 +45,13 @@ export function InputPanels(): JSX.Element | null {
       <TacticalPanel index={0} eyebrow="Subsystem 01" title="Stellar Data">
         <label className="select-field">
           <span className="field-label">Spectral class</span>
-          <select
+          <SpectralClassSelector
             value={config.stellar.spectralClass}
-            onChange={(event) => {
-              apply({
-                ...config,
-                stellar: { ...config.stellar, spectralClass: event.target.value as SpectralClass },
-              });
+            options={SPECTRAL_CLASSES}
+            onChange={(spectralClass) => {
+              apply({ ...config, stellar: { ...config.stellar, spectralClass } });
             }}
-          >
-            {SPECTRAL_CLASSES.map((spectralClass) => (
-              <option key={spectralClass} value={spectralClass}>
-                {spectralClass}
-              </option>
-            ))}
-          </select>
+          />
         </label>
         <NumberField
           label="Mass"
