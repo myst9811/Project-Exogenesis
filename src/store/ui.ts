@@ -22,12 +22,15 @@ export interface UIState {
   activePanel: InputPanel;
   /** Whether clearly-labeled AI speculation is shown (CLAUDE.md §7). */
   showSpeculative: boolean;
+  /** A sharer's name for the current world, shown for this session only. */
+  sessionDisplayName: string | null;
 }
 
 const INITIAL_UI_STATE: UIState = {
   temperatureUnit: 'celsius',
   activePanel: 'stellar',
   showSpeculative: false,
+  sessionDisplayName: null,
 };
 
 /** The UI store: a pub/sub store plus display-preference actions. */
@@ -36,6 +39,7 @@ export interface UIStore extends Store<UIState> {
   setActivePanel: (panel: InputPanel) => void;
   setShowSpeculative: (show: boolean) => void;
   toggleSpeculative: () => void;
+  setSessionDisplayName: (name: string | null) => void;
 }
 
 /**
@@ -60,6 +64,9 @@ export function createUIStore(initialState: UIState = INITIAL_UI_STATE): UIStore
     },
     toggleSpeculative: (): void => {
       store.setState((previous) => ({ ...previous, showSpeculative: !previous.showSpeculative }));
+    },
+    setSessionDisplayName: (name: string | null): void => {
+      store.setState((previous) => ({ ...previous, sessionDisplayName: name }));
     },
   };
 }

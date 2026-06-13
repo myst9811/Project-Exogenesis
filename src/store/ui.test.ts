@@ -13,6 +13,7 @@ describe('createUIStore', () => {
       temperatureUnit: 'celsius',
       activePanel: 'stellar',
       showSpeculative: false,
+      sessionDisplayName: null,
     });
   });
 
@@ -48,5 +49,14 @@ describe('createUIStore', () => {
     store.subscribe(listener);
     store.setActivePanel('orbital');
     expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  it('holds an ephemeral session display name', () => {
+    const store = createUIStore();
+    expect(store.getState().sessionDisplayName).toBeNull();
+    store.setSessionDisplayName('Zephyr');
+    expect(store.getState().sessionDisplayName).toBe('Zephyr');
+    store.setSessionDisplayName(null);
+    expect(store.getState().sessionDisplayName).toBeNull();
   });
 });
