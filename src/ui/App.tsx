@@ -22,6 +22,7 @@ import {
   loadConfigurationToken,
 } from '../store';
 import type { SimulationDiagnostic } from '../types/configuration';
+import { ArchivePanel } from './ArchivePanel';
 import { DesignateWorldModal } from './DesignateWorldModal';
 import { DiagnosticsList } from './DiagnosticsList';
 import { InputPanels } from './InputPanels';
@@ -42,6 +43,7 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
   const [designateDiagnostics, setDesignateDiagnostics] = useState<readonly SimulationDiagnostic[]>(
     [],
   );
+  const [archiveOpen, setArchiveOpen] = useState(false);
 
   // On mount: load a shared world from the URL, else seed the default.
   // `active.value` is read across awaits; a holder object avoids the flow
@@ -110,6 +112,9 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
             setDesignateDiagnostics([]);
             setDesignating(true);
           }}
+          onOpenArchive={() => {
+            setArchiveOpen(true);
+          }}
         />
         {designating && (
           <DesignateModalContainer
@@ -125,6 +130,18 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
             }}
             onCancel={() => {
               setDesignating(false);
+            }}
+          />
+        )}
+        {archiveOpen && (
+          <ArchivePanel
+            onClose={() => {
+              setArchiveOpen(false);
+            }}
+            onLoad={(entry) => {
+              stores.archive.setActive(entry.configurationHash);
+              void loadConfigurationToken(stores, entry.shareToken);
+              setArchiveOpen(false);
             }}
           />
         )}

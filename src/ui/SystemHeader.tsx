@@ -12,7 +12,13 @@ import { MissionIcon } from './MissionIcon';
 import { ShareLink } from './ShareLink';
 import { SystemStatus } from './SystemStatus';
 
-export function SystemHeader({ onDesignate }: { onDesignate: () => void }): JSX.Element {
+export function SystemHeader({
+  onDesignate,
+  onOpenArchive,
+}: {
+  onDesignate: () => void;
+  onOpenArchive: () => void;
+}): JSX.Element {
   return (
     <header className="system-header">
       <div className="header-left">
@@ -31,6 +37,9 @@ export function SystemHeader({ onDesignate }: { onDesignate: () => void }): JSX.
 
       <div className="header-right">
         <HistoryControls />
+        <button type="button" className="tactical-btn" onClick={onOpenArchive}>
+          ◫ Exploration Archive
+        </button>
         <button type="button" className="tactical-btn" onClick={onDesignate}>
           ✦ Designate World
         </button>

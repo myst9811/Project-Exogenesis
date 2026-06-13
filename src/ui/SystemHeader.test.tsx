@@ -16,7 +16,7 @@ describe('SystemHeader', () => {
   it('renders the rocket brand mark in the header-left', () => {
     const { container } = render(
       <StoresProvider stores={createAppStores()}>
-        <SystemHeader onDesignate={() => {}} />
+        <SystemHeader onDesignate={() => {}} onOpenArchive={() => {}} />
       </StoresProvider>,
     );
     const brand = container.querySelector('.header-left .mission-icon');

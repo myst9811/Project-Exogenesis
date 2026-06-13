@@ -77,4 +77,17 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Designate' }));
     expect(await screen.findByText('Aurelia')).toBeTruthy();
   });
+
+  it('opens the archive, then loads a designated world back', async () => {
+    render(<App createRenderer={fakeRenderer} />);
+    await screen.findByText(/EXO-/);
+    fireEvent.click(screen.getByRole('button', { name: /designate world/i }));
+    fireEvent.change(await screen.findByLabelText(/common name/i), { target: { value: 'Aurelia' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Designate' }));
+    await screen.findByText('Aurelia');
+    fireEvent.click(screen.getByRole('button', { name: /exploration archive/i }));
+    expect(await screen.findByLabelText(/exploration archive/i)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /load/i }));
+    expect(screen.queryByLabelText(/search archive/i)).toBeNull();
+  });
 });
