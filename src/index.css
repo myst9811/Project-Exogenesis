@@ -1257,3 +1257,36 @@ body {
   gap: 0.6rem;
   margin-top: 1.2rem;
 }
+
+/* ── Archive card ── */
+.archive-card {
+  list-style: none;
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 0.8rem;
+  background: var(--void-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.archive-card.is-active {
+  border-color: var(--border-active);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+.archive-card__readouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+}
+.archive-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.tactical-btn.danger {
+  border-color: var(--status-critical);
+  color: var(--status-critical);
+}
