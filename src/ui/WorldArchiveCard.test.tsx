@@ -28,7 +28,7 @@ const entry: WorldArchiveEntry = {
   },
 };
 
-function setup(overrides: Partial<Parameters<typeof WorldArchiveCard>[0]> = {}): {
+function setup(): {
   entry: WorldArchiveEntry;
   isActive: boolean;
   onLoad: ReturnType<typeof vi.fn>;
@@ -43,7 +43,6 @@ function setup(overrides: Partial<Parameters<typeof WorldArchiveCard>[0]> = {}):
     onRename: vi.fn(),
     onDelete: vi.fn(),
     onCopyLink: vi.fn(),
-    ...overrides,
   };
   render(
     <ul>
