@@ -13,12 +13,16 @@ import { useEffect, useState } from 'react';
 import type { JSX } from 'react';
 
 import {
+  type AppStores,
   commitConfiguration,
   createAppStores,
   createDefaultConfiguration,
+  designateCurrentWorld,
   encodeConfigurationToken,
   loadConfigurationToken,
 } from '../store';
+import type { SimulationDiagnostic } from '../types/configuration';
+import { DesignateWorldModal } from './DesignateWorldModal';
 import { DiagnosticsList } from './DiagnosticsList';
 import { InputPanels } from './InputPanels';
 import { MissionIcon } from './MissionIcon';
@@ -26,6 +30,7 @@ import { NarrationPanel } from './NarrationPanel';
 import { PlanetViewport, type PlanetRendererFactory } from './PlanetViewport';
 import { StoresProvider } from './StoresProvider';
 import { SystemHeader } from './SystemHeader';
+import { useStore } from './useStore';
 import { WorldReadouts } from './WorldReadouts';
 import { readWorldToken, writeWorldToken } from './worldUrl';
 
@@ -33,6 +38,10 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
   const [stores] = useState(createAppStores);
   const [linkError, setLinkError] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [designating, setDesignating] = useState(false);
+  const [designateDiagnostics, setDesignateDiagnostics] = useState<readonly SimulationDiagnostic[]>(
+    [],
+  );
 
   // On mount: load a shared world from the URL, else seed the default.
   // `active.value` is read across awaits; a holder object avoids the flow
@@ -96,7 +105,29 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
         <div className="scan-indicator" aria-hidden="true">
           <MissionIcon name="rocket" size={16} state="active" />
         </div>
-        <SystemHeader />
+        <SystemHeader
+          onDesignate={() => {
+            setDesignateDiagnostics([]);
+            setDesignating(true);
+          }}
+        />
+        {designating && (
+          <DesignateModalContainer
+            stores={stores}
+            diagnostics={designateDiagnostics}
+            onConfirm={(name) => {
+              const diagnostics = designateCurrentWorld(stores, name);
+              if (diagnostics.length === 0) {
+                setDesignating(false);
+              } else {
+                setDesignateDiagnostics(diagnostics);
+              }
+            }}
+            onCancel={() => {
+              setDesignating(false);
+            }}
+          />
+        )}
         {linkError !== null && (
           <p className="link-error" role="alert">
             {linkError} Showing the default world instead.
@@ -122,5 +153,47 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
         </main>
       </div>
     </StoresProvider>
+  );
+}
+
+const EARTH_SURFACE_GRAVITY = 9.806_65;
+
+/**
+ * Reads the live computed world and resolves the designate-modal props so the
+ * App shell stays lean. Renders nothing until a world exists.
+ */
+function DesignateModalContainer({
+  stores,
+  diagnostics,
+  onConfirm,
+  onCancel,
+}: {
+  stores: AppStores;
+  diagnostics: readonly SimulationDiagnostic[];
+  onConfirm: (name: string) => void;
+  onCancel: () => void;
+}): JSX.Element | null {
+  const sim = useStore(stores.simulation);
+  const archive = useStore(stores.archive);
+  const world = sim.planetaryState;
+  if (world === null) {
+    return null;
+  }
+  const designation = `EXO-${world.configurationHash.slice(0, 6).toUpperCase()}`;
+  const hzLabel =
+    world.habitableZone === null ? 'OUT OF RANGE' : world.habitableZone.position.toUpperCase();
+  return (
+    <DesignateWorldModal
+      designation={designation}
+      readouts={{
+        surfaceTemperatureKelvin: world.climate.surfaceTemperatureKelvin,
+        surfaceGravityEarthG: world.bulk.surfaceGravityMetersPerSecondSquared / EARTH_SURFACE_GRAVITY,
+        hzLabel,
+      }}
+      initialName={archive.entries[world.configurationHash]?.commonName ?? ''}
+      diagnostics={diagnostics}
+      onConfirm={onConfirm}
+      onCancel={onCancel}
+    />
   );
 }

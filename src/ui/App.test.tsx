@@ -3,7 +3,7 @@
  * @vitest-environment jsdom
  */
 
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { encodeConfigurationToken } from '../store';
@@ -67,5 +67,14 @@ describe('App', () => {
       expect(screen.getByRole('alert').textContent).toContain('default world');
     });
     expect(screen.getByText('Earth-like gravity')).toBeTruthy();
+  });
+
+  it('designates the current world from the header and shows the name in the HUD', async () => {
+    render(<App createRenderer={fakeRenderer} />);
+    await screen.findByText(/EXO-/);
+    fireEvent.click(screen.getByRole('button', { name: /designate world/i }));
+    fireEvent.change(await screen.findByLabelText(/common name/i), { target: { value: 'Aurelia' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Designate' }));
+    expect(await screen.findByText('Aurelia')).toBeTruthy();
   });
 });
