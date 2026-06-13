@@ -31,3 +31,34 @@ export function writeWorldToken(token: string): void {
     window.history.replaceState(null, '', nextHash);
   }
 }
+
+const DISPLAY_NAME_PARAM = 'n';
+const MAX_DISPLAY_NAME = 40;
+
+/**
+ * Returns the display name from the URL fragment's `n` param, truncated to 40
+ * characters, or null if absent. Cosmetic only — never affects decode.
+ */
+export function readDisplayName(): string | null {
+  const fragment = window.location.hash.replace(/^#/, '');
+  const value = new URLSearchParams(fragment).get(DISPLAY_NAME_PARAM);
+  if (value === null) {
+    return null;
+  }
+  return value.slice(0, MAX_DISPLAY_NAME);
+}
+
+/**
+ * Writes the display name into the `n` fragment param via `replaceState`,
+ * alongside any existing `w` token.
+ *
+ * @param name - The display name to reflect in the URL
+ */
+export function writeDisplayName(name: string): void {
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  params.set(DISPLAY_NAME_PARAM, name);
+  const nextHash = `#${params.toString()}`;
+  if (window.location.hash !== nextHash) {
+    window.history.replaceState(null, '', nextHash);
+  }
+}
