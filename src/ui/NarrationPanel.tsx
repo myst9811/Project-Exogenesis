@@ -23,6 +23,7 @@ import {
   speculateEcology,
 } from '../ai';
 import { createGeminiClientFromEnv } from '../ai/providers/gemini';
+import { MissionIcon } from './MissionIcon';
 import type { PlanetaryState } from '../types/physics';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
@@ -101,6 +102,13 @@ export function NarrationPanel({
           Speculate
         </button>
       </div>
+
+      {status === 'idle' && content === null && (
+        <div className="narration-empty">
+          <MissionIcon name="rover" size={36} state="idle" />
+          <span>No field notes yet — request a narration above.</span>
+        </div>
+      )}
 
       {busy && <p className="narration-status">Generating…</p>}
       {status === 'error' && <p className="narration-error">{errorMessage}</p>}

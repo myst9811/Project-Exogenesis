@@ -3,7 +3,7 @@
  * @vitest-environment jsdom
  */
 
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { commitConfiguration, createAppStores, createDefaultConfiguration } from '../store';
@@ -16,12 +16,14 @@ afterEach(cleanup);
 function fakeRenderer(): {
   renderer: PlanetRenderer;
   setParameters: ReturnType<typeof vi.fn>;
+  setView: ReturnType<typeof vi.fn>;
   dispose: ReturnType<typeof vi.fn>;
 } {
   const setParameters = vi.fn();
+  const setView = vi.fn();
   const dispose = vi.fn();
-  const renderer: PlanetRenderer = { setParameters, resize: vi.fn(), dispose };
-  return { renderer, setParameters, dispose };
+  const renderer: PlanetRenderer = { setParameters, setView, resize: vi.fn(), dispose };
+  return { renderer, setParameters, setView, dispose };
 }
 
 describe('PlanetViewport', () => {
@@ -48,6 +50,32 @@ describe('PlanetViewport', () => {
       starAngularRadius: expect.any(Number) as number,
       spinRadiansPerSecond: expect.any(Number) as number,
     });
+  });
+
+  it('selects Observation on mount and switches view when a rail button is clicked', async () => {
+    const stores = createAppStores();
+    await commitConfiguration(stores, createDefaultConfiguration());
+    const { renderer, setView } = fakeRenderer();
+    render(
+      <StoresProvider stores={stores}>
+        <PlanetViewport createRenderer={() => renderer} />
+      </StoresProvider>,
+    );
+    await waitFor(() => {
+      expect(setView).toHaveBeenCalledWith('observation');
+    });
+    fireEvent.click(screen.getByRole('button', { name: /system/i }));
+    expect(setView).toHaveBeenCalledWith('system');
+  });
+
+  it('shows the empty-deck overlay when no world is computed', () => {
+    const { renderer } = fakeRenderer();
+    render(
+      <StoresProvider stores={createAppStores()}>
+        <PlanetViewport createRenderer={() => renderer} />
+      </StoresProvider>,
+    );
+    expect(screen.getByText('Configure a world to begin.')).not.toBeNull();
   });
 
   it('disposes the renderer on unmount', () => {

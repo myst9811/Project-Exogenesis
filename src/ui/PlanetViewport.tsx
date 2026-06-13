@@ -7,12 +7,16 @@
  * tested without a GL context, which jsdom does not provide.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { JSX } from 'react';
 
 import { deriveShaderUniforms } from '../renderer/shaderUniforms';
 import { createPlanetRenderer } from '../renderer/scene/planetRenderer';
 import type { PlanetRenderer } from '../renderer/scene/planetRenderer';
+import type { PlanetView } from '../types/render';
+import { MissionIcon } from './MissionIcon';
+import { ModeRail } from './ModeRail';
+import { ViewLabel } from './ViewLabel';
 import { ViewportHud } from './ViewportHud';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
@@ -28,6 +32,7 @@ export function PlanetViewport({
   const state = useStore(simulation);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<PlanetRenderer | null>(null);
+  const [view, setView] = useState<PlanetView>('observation');
 
   // Create the renderer once, on mount; dispose it on unmount.
   useEffect(() => {
@@ -58,10 +63,28 @@ export function PlanetViewport({
     }
   }, [world, liquidWater]);
 
+  // Push the selected camera framing to the renderer whenever it changes.
+  useEffect(() => {
+    rendererRef.current?.setView(view);
+  }, [view]);
+
   return (
     <div className="viewport-frame">
       <canvas ref={canvasRef} className="planet-viewport" aria-label="planet view" />
+      <ModeRail view={view} onSelectView={setView} />
+      {world !== null && (
+        <ViewLabel
+          view={view}
+          semiMajorAxisAu={world.configuration.orbital.semiMajorAxisAstronomicalUnits}
+        />
+      )}
       <ViewportHud />
+      {world === null && (
+        <div className="viewport-empty">
+          <MissionIcon name="cockpit" size={72} state="idle" />
+          <p>Configure a world to begin.</p>
+        </div>
+      )}
     </div>
   );
 }

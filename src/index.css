@@ -1022,3 +1022,137 @@ body {
     min-height: 0;
   }
 }
+
+/* ── Mission icons (UI chrome) ── */
+.mission-icon {
+  display: inline-flex;
+  line-height: 0;
+  color: var(--cyan-mid);
+}
+.mission-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.mission-icon--active {
+  color: var(--cyan-bright);
+  filter: drop-shadow(0 0 6px var(--cyan-glow));
+}
+.mission-icon--locked {
+  color: var(--text-ghost);
+}
+.mission-icon--idle {
+  color: var(--cyan-mid);
+}
+
+/* ── Mode rail (roadmap glyphs) ── */
+.mode-rail {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 2;
+}
+.mode-rail__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  background: rgba(6, 13, 26, 0.55);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.mode-rail__item:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+.mode-rail__item.is-active {
+  border-color: var(--border-active);
+  color: var(--cyan-bright);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+.mode-rail__label {
+  line-height: 1;
+}
+
+/* ── Icon-driven states ── */
+.viewport-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+}
+.narration-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-secondary);
+  font-size: var(--text-caption);
+  padding: 0.6rem 0;
+}
+.scan-indicator {
+  position: absolute;
+  top: 0.6rem;
+  right: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+.console.scanning .scan-indicator {
+  opacity: 1;
+  animation: scan-pulse 0.8s ease-in-out;
+}
+@keyframes scan-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+}
+
+/* ── Viewport perspective label ── */
+.view-label {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+  font-family: var(--font-data);
+  letter-spacing: var(--tracking-data);
+  pointer-events: none;
+  z-index: 2;
+}
+.view-label__name {
+  color: var(--cyan-bright);
+  font-size: var(--text-caption);
+}
+.view-label__note {
+  color: var(--text-secondary);
+  font-size: var(--text-micro);
+}

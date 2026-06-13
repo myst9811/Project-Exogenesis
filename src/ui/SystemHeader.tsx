@@ -8,6 +8,7 @@
 import type { JSX } from 'react';
 
 import { HistoryControls } from './HistoryControls';
+import { MissionIcon } from './MissionIcon';
 import { ShareLink } from './ShareLink';
 import { SystemStatus } from './SystemStatus';
 
@@ -15,8 +16,8 @@ export function SystemHeader(): JSX.Element {
   return (
     <header className="system-header">
       <div className="header-left">
-        <span className="system-logo" aria-hidden="true">
-          ◈
+        <span className="system-logo">
+          <MissionIcon name="rocket" size={22} state="active" />
         </span>
         <div className="system-id">
           <h1 className="system-name">Project Exogenesis</h1>
