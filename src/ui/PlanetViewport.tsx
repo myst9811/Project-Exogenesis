@@ -13,6 +13,7 @@ import type { JSX } from 'react';
 import { deriveShaderUniforms } from '../renderer/shaderUniforms';
 import { createPlanetRenderer } from '../renderer/scene/planetRenderer';
 import type { PlanetRenderer } from '../renderer/scene/planetRenderer';
+import { ModeRail } from './ModeRail';
 import { ViewportHud } from './ViewportHud';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
@@ -61,6 +62,7 @@ export function PlanetViewport({
   return (
     <div className="viewport-frame">
       <canvas ref={canvasRef} className="planet-viewport" aria-label="planet view" />
+      <ModeRail />
       <ViewportHud />
     </div>
   );

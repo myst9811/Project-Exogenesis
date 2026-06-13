@@ -1044,3 +1044,32 @@ body {
 .mission-icon--idle {
   color: var(--cyan-mid);
 }
+
+/* ── Mode rail (roadmap glyphs) ── */
+.mode-rail {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  z-index: 2;
+}
+.mode-rail__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  background: rgba(6, 13, 26, 0.55);
+}
+.mode-rail__item.is-active {
+  border-color: var(--border-active);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+.mode-rail__item.is-locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
