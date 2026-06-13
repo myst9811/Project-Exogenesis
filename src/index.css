@@ -1156,3 +1156,30 @@ body {
   color: var(--text-secondary);
   font-size: var(--text-micro);
 }
+
+/* ── World identity (common name + designation) ── */
+.world-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.world-identity__name {
+  font-family: var(--font-display);
+  color: var(--cyan-bright);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-data);
+}
+.world-identity__designation {
+  font-family: var(--font-data);
+  color: var(--text-secondary);
+  font-size: var(--text-micro);
+}
+.world-identity--hud .world-identity__name {
+  font-size: var(--text-readout-size);
+}
+.world-identity--header .world-identity__name {
+  font-size: var(--text-data);
+}
+.world-identity--card .world-identity__name {
+  font-size: var(--text-data);
+}
