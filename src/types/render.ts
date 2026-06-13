@@ -38,13 +38,6 @@ export interface AtmosphereRenderParameters {
   opacity: number;
 }
 
-/** The complete derived visual description of a world. */
-export interface RenderParameters {
-  star: StarRenderParameters;
-  planet: PlanetRenderParameters;
-  atmosphere: AtmosphereRenderParameters;
-}
-
 /**
  * The complete uniform set the planet shader consumes. Every field is derived
  * from computed physics by `deriveShaderUniforms` (CLAUDE.md §8). Colors are

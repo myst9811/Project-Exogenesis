@@ -10,7 +10,7 @@
 import { useEffect, useRef } from 'react';
 import type { JSX } from 'react';
 
-import { deriveRenderParameters } from '../renderer/parameters';
+import { deriveShaderUniforms } from '../renderer/shaderUniforms';
 import { createPlanetRenderer } from '../renderer/scene/planetRenderer';
 import type { PlanetRenderer } from '../renderer/scene/planetRenderer';
 import { ViewportHud } from './ViewportHud';
@@ -49,13 +49,14 @@ export function PlanetViewport({
     };
   }, [createRenderer]);
 
-  // Push derived parameters whenever the computed world changes.
+  // Push derived shader uniforms whenever the computed world changes.
   const world = state.planetaryState;
+  const liquidWater = state.habitability?.liquidWater ?? null;
   useEffect(() => {
-    if (world !== null && rendererRef.current !== null) {
-      rendererRef.current.setParameters(deriveRenderParameters(world));
+    if (world !== null && liquidWater !== null && rendererRef.current !== null) {
+      rendererRef.current.setParameters(deriveShaderUniforms(world, liquidWater));
     }
-  }, [world]);
+  }, [world, liquidWater]);
 
   return (
     <div className="viewport-frame">
