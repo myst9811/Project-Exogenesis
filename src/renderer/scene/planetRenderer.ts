@@ -55,9 +55,16 @@ const STARFIELD_COUNT = 1500;
 const STARFIELD_RADIUS = 400;
 const PLANET_RADIUS_SCENE = 1;
 const ATMOSPHERE_RADIUS_SCENE = 1.025;
-const STAR_POSITION = new Vector3(-6, 1.5, -4);
-/** World-space direction from the planet toward the star (for shader lighting). */
-const LIGHT_DIR = STAR_POSITION.clone().normalize();
+/** Visible stellar-disc position: upper-left, set back so it stays in frame. */
+const STAR_POSITION = new Vector3(-5.5, 3.5, -2);
+/**
+ * World-space direction the planet is lit from. Deliberately front-upper-left
+ * (positive z, toward the camera at +z) so the camera sees a well-lit disc
+ * with the terminator toward the lower-left, rather than the night side. It
+ * shares the star's screen-space (upper-left) direction; the small z
+ * difference from the disc is imperceptible.
+ */
+const LIGHT_DIR = new Vector3(-0.5, 0.45, 0.75).normalize();
 
 /**
  * Deterministic PRNG (mulberry32) for procedural geometry — never
@@ -121,11 +128,12 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
   star.renderOrder = 2;
   scene.add(star);
 
-  // The star also lights the planet, giving a day/night terminator.
+  // The star lights the planet from the front-upper-left (matches the shader
+  // LIGHT_DIR) so the fallback material is lit consistently with the shader.
   const sunlight = new DirectionalLight(0xff_ff_ff, 3);
-  sunlight.position.copy(STAR_POSITION);
+  sunlight.position.copy(LIGHT_DIR).multiplyScalar(10);
   scene.add(sunlight);
-  scene.add(new AmbientLight(0xff_ff_ff, 0.05));
+  scene.add(new AmbientLight(0xff_ff_ff, 0.12));
 
   // §8 pass 3: planet sphere — a custom shader, with a solid-color fallback.
   const planetUniforms = {
@@ -240,9 +248,10 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
       // Spin rate (sign sets prograde/retrograde).
       currentSpin = uniforms.spinRadiansPerSecond;
 
-      // Atmosphere shell.
+      // Atmosphere shell (toned to a limb glow rather than a solid band;
+      // Stage 3 replaces this with an in-shader fresnel rim).
       atmosphere.visible = uniforms.atmospherePresent;
-      atmosphereMaterial.opacity = uniforms.atmosphereThickness;
+      atmosphereMaterial.opacity = uniforms.atmosphereThickness * 0.5;
       atmosphereMaterial.color.setRGB(
         uniforms.skyColorRgb.r,
         uniforms.skyColorRgb.g,

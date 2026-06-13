@@ -76,9 +76,11 @@ export const PLANET_FRAGMENT_SHADER = /* glsl */ `
     // Molten override.
     base = mix(base, vec3(1.0, 0.35, 0.1), uMoltenFactor);
 
-    // Day/night Lambert from the star direction.
-    float day = clamp(dot(normalize(vNormal), normalize(uLightDir)), 0.0, 1.0);
-    vec3 lit = base * (0.06 + 0.95 * day) * uStarColor;
+    // Day/night Lambert from the star direction, with a soft day ramp so the
+    // terminator is gradual; ambient gives the night side faint earthshine.
+    float ndl = dot(normalize(vNormal), normalize(uLightDir));
+    float day = smoothstep(-0.2, 0.3, ndl);
+    vec3 lit = base * (0.12 + 0.95 * day) * uStarColor;
     lit += uSurfaceColor * uMoltenFactor * (1.0 - day) * vec3(1.0, 0.3, 0.08);
 
     gl_FragColor = vec4(lit, 1.0);
