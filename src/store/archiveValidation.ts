@@ -7,6 +7,7 @@
  */
 
 import type { SimulationDiagnostic } from '../types/configuration';
+import type { ArchiveState } from '../types/archive';
 
 /** A validated name, or the diagnostic explaining why it was rejected. */
 export type NameValidation =
@@ -53,4 +54,31 @@ export function validateCommonName(raw: string): NameValidation {
     return invalid('Use only letters, numbers, spaces, hyphens, and apostrophes.');
   }
   return { ok: true, value: name };
+}
+
+/** The two names a world may show: the honest designation and an optional common name. */
+export interface ResolvedDisplayName {
+  designation: string | null;
+  commonName: string | null;
+}
+
+/**
+ * Resolves the display names for a world from the archive and its hash.
+ * `designation` is `EXO-` + the first six hex chars (uppercased); `commonName`
+ * is the saved name for that hash, if any.
+ *
+ * @param archive - The current archive state
+ * @param configurationHash - The active world's hash, or null
+ * @returns The resolved designation and common name
+ */
+export function resolveDisplayName(
+  archive: ArchiveState,
+  configurationHash: string | null,
+): ResolvedDisplayName {
+  if (configurationHash === null) {
+    return { designation: null, commonName: null };
+  }
+  const designation = `EXO-${configurationHash.slice(0, 6).toUpperCase()}`;
+  const commonName = archive.entries[configurationHash]?.commonName ?? null;
+  return { designation, commonName };
 }

@@ -4,7 +4,36 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { validateCommonName } from './archiveValidation';
+import { resolveDisplayName, validateCommonName } from './archiveValidation';
+import type { ArchiveState, WorldArchiveEntry } from '../types/archive';
+
+function entryFor(hash: string, name: string): WorldArchiveEntry {
+  return {
+    configurationHash: hash,
+    commonName: name,
+    shareToken: 'tok',
+    designatedAt: '2026-06-14T00:00:00.000Z',
+    updatedAt: '2026-06-14T00:00:00.000Z',
+    catalogSnapshot: {
+      spectralClass: 'G',
+      semiMajorAxisAu: 1,
+      surfaceTemperatureKelvin: 288,
+      surfaceGravityEarthG: 1,
+      survivabilityScore: 100,
+      habitableZonePosition: 'inside-optimistic',
+      limitingFactor: 'thermal',
+    },
+  };
+}
+
+function stateWith(entry?: WorldArchiveEntry): ArchiveState {
+  return {
+    schemaVersion: '1.0.0',
+    entries: entry ? { [entry.configurationHash]: entry } : {},
+    activeHash: null,
+    hydrated: true,
+  };
+}
 
 describe('validateCommonName', () => {
   it('accepts a simple name and trims surrounding whitespace', () => {
@@ -50,5 +79,27 @@ describe('validateCommonName', () => {
       expect(result.diagnostic.severity).toBe('error');
       expect(result.diagnostic.message.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('resolveDisplayName', () => {
+  it('returns the designation and null common name when no hash', () => {
+    expect(resolveDisplayName(stateWith(), null)).toEqual({
+      designation: null,
+      commonName: null,
+    });
+  });
+
+  it('derives the EXO designation from the hash prefix', () => {
+    const r = resolveDisplayName(stateWith(), 'a3f2b1ffffff');
+    expect(r.designation).toBe('EXO-A3F2B1');
+    expect(r.commonName).toBeNull();
+  });
+
+  it('returns the saved common name when an entry exists', () => {
+    const entry = entryFor('a3f2b1ffffff', 'Aurelia');
+    const r = resolveDisplayName(stateWith(entry), 'a3f2b1ffffff');
+    expect(r.commonName).toBe('Aurelia');
+    expect(r.designation).toBe('EXO-A3F2B1');
   });
 });
