@@ -6,7 +6,12 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { commitConfiguration, createAppStores, createDefaultConfiguration } from '../store';
+import {
+  commitConfiguration,
+  createAppStores,
+  createDefaultConfiguration,
+  designateCurrentWorld,
+} from '../store';
 import { StoresProvider } from './StoresProvider';
 import { ViewportHud } from './ViewportHud';
 
@@ -47,5 +52,17 @@ describe('ViewportHud', () => {
     );
     expect(screen.getByText('STAR · G-TYPE')).toBeTruthy();
     expect(screen.getByText('INSIDE · CONSERVATIVE')).toBeTruthy();
+  });
+
+  it('shows the common name once the active world is designated', async () => {
+    const stores = createAppStores();
+    await commitConfiguration(stores, createDefaultConfiguration());
+    designateCurrentWorld(stores, 'Aurelia');
+    render(
+      <StoresProvider stores={stores}>
+        <ViewportHud />
+      </StoresProvider>,
+    );
+    expect(screen.getByText('Aurelia')).toBeTruthy();
   });
 });
