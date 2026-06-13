@@ -147,3 +147,20 @@ Each stage compiles, passes tests, builds, and is viewable via `npm run dev`.
 ## 13. Performance budget
 
 Target 60 fps (CLAUDE.md §18). A single fragment shader over one sphere with 3–4 noise octaves + cloud layer is well within budget on modern GPUs. `uTime`-driven drift is cheap. No profiling-driven optimization unless a measured frame-time regression appears.
+
+---
+
+## Status: Implemented (2026-06-13)
+
+All three stages shipped and visually verified by the project owner:
+
+- **Stage 1** — physics-driven surface palette, temperature ice caps, molten tint, day/night Lambert; star sized by real angular radius; spin from rotation period.
+- **Stage 2** — seeded fBm procedural continents, oceans (gated by liquid-water + water vapor), and terrain relief.
+- **Stage 3** — drifting day-lit clouds (water vapor × pressure) and a fresnel atmospheric limb tinted by the Rayleigh sky color.
+
+A post-Stage-2 lighting fix repositioned the star to the camera-facing side
+(it had been back-lighting the planet, showing the night side), raised
+ambient for faint night-side earthshine, softened the terminator, and toned
+the atmosphere shell to a glow. `deriveShaderUniforms` is pure and unit-tested
+(100% lines); the GLSL/scene is WebGL-only and coverage-excluded, verified by
+build + `npm run dev`. All 414 tests green; coverage gates pass; build clean.
