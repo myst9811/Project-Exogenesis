@@ -133,6 +133,9 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
     uStarColor: { value: new Color(1, 1, 1) },
     uIceFraction: { value: 0 },
     uMoltenFactor: { value: 0 },
+    uOceanLevel: { value: 0 },
+    uTerrainSeed: { value: 0 },
+    uTerrainRoughness: { value: 0.5 },
     uLightDir: { value: LIGHT_DIR.clone() },
   };
   const shaderMaterial = new ShaderMaterial({
@@ -211,6 +214,9 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
         );
         planetUniforms.uIceFraction.value = uniforms.iceFraction;
         planetUniforms.uMoltenFactor.value = uniforms.moltenFactor;
+        planetUniforms.uOceanLevel.value = uniforms.oceanLevel;
+        planetUniforms.uTerrainSeed.value = uniforms.terrainSeed;
+        planetUniforms.uTerrainRoughness.value = uniforms.terrainRoughness;
       } else {
         fallbackMaterial.color.copy(lastSurfaceColor);
       }
