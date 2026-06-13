@@ -1,48 +1,55 @@
 /**
  * @module ui/ModeRail
  *
- * The exploration mode rail overlaid on the viewport: the current Observation
- * mode is active; Surface and System are roadmap capabilities, shown locked
- * (CLAUDE.md §16). Presentational only — the mode list is a static constant;
- * no store state exists because only one mode is real today.
+ * The viewport perspective switcher: three labeled controls that reframe the
+ * camera on the same computed world (Observation / Surface / System). Pure
+ * presentational chrome — it owns no state; the selected view and the change
+ * handler are supplied by `PlanetViewport`.
  */
 
 import type { JSX } from 'react';
 
 import { MissionIcon, type MissionIconName } from './MissionIcon';
+import type { PlanetView } from '../types/render';
 
-interface ExplorationMode {
-  id: string;
+interface ViewOption {
+  id: PlanetView;
   label: string;
   icon: MissionIconName;
-  available: boolean;
 }
 
-const MODES: readonly ExplorationMode[] = [
-  { id: 'observation', label: 'Observation', icon: 'cockpit', available: true },
-  { id: 'surface', label: 'Surface', icon: 'rover', available: false },
-  { id: 'system', label: 'System', icon: 'shuttle', available: false },
+const VIEWS: readonly ViewOption[] = [
+  { id: 'observation', label: 'Observation', icon: 'cockpit' },
+  { id: 'surface', label: 'Surface', icon: 'rover' },
+  { id: 'system', label: 'System', icon: 'shuttle' },
 ];
 
-export function ModeRail(): JSX.Element {
+export function ModeRail({
+  view,
+  onSelectView,
+}: {
+  view: PlanetView;
+  onSelectView: (view: PlanetView) => void;
+}): JSX.Element {
   return (
-    <div className="mode-rail" role="group" aria-label="exploration modes">
-      {MODES.map((mode) => (
-        <div
-          key={mode.id}
-          className={`mode-rail__item ${mode.available ? 'is-active' : 'is-locked'}`}
-          aria-current={mode.available ? 'true' : undefined}
-          aria-disabled={mode.available ? undefined : 'true'}
-          title={mode.available ? `${mode.label} (active)` : `${mode.label} — coming soon`}
-        >
-          <MissionIcon
-            name={mode.icon}
-            label={mode.label}
-            size={26}
-            state={mode.available ? 'active' : 'locked'}
-          />
-        </div>
-      ))}
+    <div className="mode-rail" role="group" aria-label="viewport perspectives">
+      {VIEWS.map((option) => {
+        const isActive = option.id === view;
+        return (
+          <button
+            key={option.id}
+            type="button"
+            className={`mode-rail__item ${isActive ? 'is-active' : ''}`}
+            aria-current={isActive ? 'true' : undefined}
+            onClick={() => {
+              onSelectView(option.id);
+            }}
+          >
+            <MissionIcon name={option.icon} size={26} state={isActive ? 'active' : 'idle'} />
+            <span className="mode-rail__label">{option.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
