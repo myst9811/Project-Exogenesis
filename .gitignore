@@ -8,3 +8,7 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# Claude Design prototype exports (large self-contained HTML bundles, not source).
+Exogenesis Console.html
+*.design-export.html

@@ -17,7 +17,10 @@ import {
   translatePressure,
   translateSurfaceTemperature,
 } from '../translation';
+import type { HabitabilityStatus } from '../types/habitability';
+import { AtmosphereBar } from './AtmosphereBar';
 import { GravityGauge } from './GravityGauge';
+import { HabitabilityGauge, survivabilityTone } from './HabitabilityGauge';
 import { ReadoutCard } from './ReadoutCard';
 import { ThermalSpectrum } from './ThermalSpectrum';
 import { useStore } from './useStore';
@@ -26,6 +29,14 @@ import { useStores } from './StoresProvider';
 const SECONDS_PER_HOUR = 3600;
 const SECONDS_PER_DAY = 86_400;
 const KELVIN_TO_CELSIUS_OFFSET = 273.15;
+
+/** Felt-experience brief for a human-baseline survivability status. */
+const SURVIVAL_BRIEF: Record<HabitabilityStatus, string> = {
+  optimal: 'Readily survivable for an unprotected human.',
+  tolerable: 'Survivable, but only with life support.',
+  hostile: 'Hostile to human life without heavy protection.',
+  lethal: 'Immediately lethal to an unprotected human.',
+};
 
 export function WorldReadouts(): JSX.Element {
   const { simulation } = useStores();
@@ -42,6 +53,7 @@ export function WorldReadouts(): JSX.Element {
 
   const rotationHours = world.configuration.rotation.rotationPeriodHours;
   const surfaceCelsius = Math.round(world.climate.surfaceTemperatureKelvin - KELVIN_TO_CELSIUS_OFFSET);
+  const survival = state.habitability?.survival[0] ?? null;
 
   return (
     <section className="readouts" aria-label="world readouts">
@@ -61,10 +73,35 @@ export function WorldReadouts(): JSX.Element {
         rawValue={`${Math.round(world.climate.surfaceTemperatureKelvin)} K | ${surfaceCelsius} °C`}
         instrument={<ThermalSpectrum temperatureKelvin={world.climate.surfaceTemperatureKelvin} />}
       />
+      {survival !== null && (
+        <ReadoutCard
+          label="Habitability"
+          brief={SURVIVAL_BRIEF[survival.status]}
+          tone={survivabilityTone(survival.survivabilityScore)}
+          rawValue={`${Math.round(survival.survivabilityScore)} / 100`}
+          instrument={
+            <HabitabilityGauge
+              score={survival.survivabilityScore}
+              limitingFactor={survival.limitingFactor}
+            />
+          }
+        />
+      )}
       <ReadoutCard
         label="Atmospheric Pressure"
         translation={translatePressure(world.atmosphere.surfacePressureKilopascals)}
         rawValue={`${world.atmosphere.surfacePressureKilopascals.toFixed(1)} kPa`}
+      />
+      <ReadoutCard
+        label="Atmosphere"
+        brief="Composition by partial pressure."
+        tone="accent"
+        rawValue={`${world.atmosphere.surfacePressureKilopascals.toFixed(1)} kPa`}
+        instrument={
+          <AtmosphereBar
+            partialPressuresKilopascals={world.configuration.atmosphere.partialPressuresKilopascals}
+          />
+        }
       />
       <ReadoutCard
         label="Escape Velocity"

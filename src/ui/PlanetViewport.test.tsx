@@ -25,7 +25,7 @@ function fakeRenderer(): {
 }
 
 describe('PlanetViewport', () => {
-  it('feeds derived render parameters to the renderer for the computed world', async () => {
+  it('feeds derived shader uniforms to the renderer for the computed world', async () => {
     const stores = createAppStores();
     await commitConfiguration(stores, createDefaultConfiguration());
     const { renderer, setParameters } = fakeRenderer();
@@ -39,11 +39,14 @@ describe('PlanetViewport', () => {
     await waitFor(() => {
       expect(setParameters).toHaveBeenCalled();
     });
-    const params = setParameters.mock.calls[0]?.[0] as unknown;
-    expect(params).toMatchObject({
-      star: expect.any(Object) as object,
-      planet: expect.any(Object) as object,
-      atmosphere: expect.any(Object) as object,
+    const uniforms = setParameters.mock.calls[0]?.[0] as unknown;
+    // The flat PlanetShaderUniforms bag, derived from real computed state.
+    expect(uniforms).toMatchObject({
+      surfaceColorRgb: expect.any(Object) as object,
+      oceanLevel: expect.any(Number) as number,
+      iceFraction: expect.any(Number) as number,
+      starAngularRadius: expect.any(Number) as number,
+      spinRadiansPerSecond: expect.any(Number) as number,
     });
   });
 

@@ -2,13 +2,15 @@
  * @module renderer/scene/planetRenderer
  *
  * The imperative Three.js scene (ADR-006): a framework-agnostic renderer
- * that consumes `RenderParameters` and draws the world. It authors no
- * visual values of its own — every color, size, and opacity comes from the
- * derivation layer, which derives them from `PlanetaryState` (CLAUDE.md §8).
+ * that consumes `PlanetShaderUniforms` and draws the world. It authors no
+ * visual values of its own — every color, size, opacity, and spin comes from
+ * the derivation layer, which derives them from `PlanetaryState` (CLAUDE.md
+ * §8). The planet is a custom `ShaderMaterial`; on a shader-compile failure
+ * it falls back to a solid `MeshStandardMaterial` so the viewport never
+ * blanks.
  *
  * Render passes follow the §8 order via per-object `renderOrder`:
  *   1 space (starfield) → 2 stellar disk → 3 planet → 5 atmosphere shell.
- * Clouds (4) and lens effects (6) are future passes.
  *
  * This module requires a WebGL context and is therefore excluded from unit
  * coverage (CLAUDE.md §11); it is verified by build and by running the app.
@@ -28,17 +30,20 @@ import {
   Points,
   PointsMaterial,
   Scene,
+  ShaderMaterial,
   SphereGeometry,
   SRGBColorSpace,
+  Vector3,
   WebGLRenderer,
 } from 'three';
 
-import type { RenderParameters } from '../../types/render';
+import type { PlanetShaderUniforms } from '../../types/render';
+import { PLANET_FRAGMENT_SHADER, PLANET_VERTEX_SHADER } from './planetShaders';
 
 /** A mounted renderer driving one canvas. */
 export interface PlanetRenderer {
   /** Applies derived visual parameters to the scene. */
-  setParameters: (parameters: RenderParameters) => void;
+  setParameters: (uniforms: PlanetShaderUniforms) => void;
   /** Resizes the drawing buffer and camera to the given pixel size. */
   resize: (width: number, height: number) => void;
   /** Releases GPU resources and stops the animation loop. */
@@ -50,6 +55,16 @@ const STARFIELD_COUNT = 1500;
 const STARFIELD_RADIUS = 400;
 const PLANET_RADIUS_SCENE = 1;
 const ATMOSPHERE_RADIUS_SCENE = 1.025;
+/** Visible stellar-disc position: upper-left, set back so it stays in frame. */
+const STAR_POSITION = new Vector3(-5.5, 3.5, -2);
+/**
+ * World-space direction the planet is lit from. Deliberately front-upper-left
+ * (positive z, toward the camera at +z) so the camera sees a well-lit disc
+ * with the terminator toward the lower-left, rather than the night side. It
+ * shares the star's screen-space (upper-left) direction; the small z
+ * difference from the disc is imperceptible.
+ */
+const LIGHT_DIR = new Vector3(-0.5, 0.45, 0.75).normalize();
 
 /**
  * Deterministic PRNG (mulberry32) for procedural geometry — never
@@ -109,21 +124,58 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
   // §8 pass 2: stellar disk — an unlit emissive sphere off to one side.
   const starMaterial = new MeshBasicMaterial({ color: 0xff_ff_ff });
   const star = new Mesh(new SphereGeometry(0.4, 32, 32), starMaterial);
-  star.position.set(-6, 1.5, -4);
+  star.position.copy(STAR_POSITION);
   star.renderOrder = 2;
   scene.add(star);
 
-  // The star also lights the planet, giving a day/night terminator.
+  // The star lights the planet from the front-upper-left (matches the shader
+  // LIGHT_DIR) so the fallback material is lit consistently with the shader.
   const sunlight = new DirectionalLight(0xff_ff_ff, 3);
-  sunlight.position.copy(star.position);
+  sunlight.position.copy(LIGHT_DIR).multiplyScalar(10);
   scene.add(sunlight);
-  scene.add(new AmbientLight(0xff_ff_ff, 0.05));
+  scene.add(new AmbientLight(0xff_ff_ff, 0.12));
 
-  // §8 pass 3: planet sphere.
-  const planetMaterial = new MeshStandardMaterial({ color: 0xff_ff_ff, roughness: 0.95 });
-  const planet = new Mesh(new SphereGeometry(PLANET_RADIUS_SCENE, 64, 64), planetMaterial);
+  // §8 pass 3: planet sphere — a custom shader, with a solid-color fallback.
+  const planetUniforms = {
+    uSurfaceColor: { value: new Color(1, 1, 1) },
+    uStarColor: { value: new Color(1, 1, 1) },
+    uIceFraction: { value: 0 },
+    uMoltenFactor: { value: 0 },
+    uOceanLevel: { value: 0 },
+    uTerrainSeed: { value: 0 },
+    uTerrainRoughness: { value: 0.5 },
+    uLightDir: { value: LIGHT_DIR.clone() },
+    uCloudDensity: { value: 0 },
+    uSkyColor: { value: new Color(0, 0, 0) },
+    uAtmThickness: { value: 0 },
+    uTime: { value: 0 },
+  };
+  const shaderMaterial = new ShaderMaterial({
+    vertexShader: PLANET_VERTEX_SHADER,
+    fragmentShader: PLANET_FRAGMENT_SHADER,
+    uniforms: planetUniforms,
+  });
+  const fallbackMaterial = new MeshStandardMaterial({ color: 0xff_ff_ff, roughness: 0.95 });
+  const planet = new Mesh<SphereGeometry, ShaderMaterial | MeshStandardMaterial>(
+    new SphereGeometry(PLANET_RADIUS_SCENE, 96, 96),
+    shaderMaterial,
+  );
   planet.renderOrder = 3;
   scene.add(planet);
+
+  // If the planet shader fails to compile/link, swap to the solid fallback so
+  // the viewport never blanks. Fires during render on the offending program.
+  let planetUsesShader = true;
+  const lastSurfaceColor = new Color(1, 1, 1);
+  renderer.debug.onShaderError = (): void => {
+    if (planetUsesShader) {
+      planetUsesShader = false;
+      fallbackMaterial.color.copy(lastSurfaceColor);
+      planet.material = fallbackMaterial;
+      // eslint-disable-next-line no-console
+      console.error('[renderer] planet shader failed to compile; using solid fallback.');
+    }
+  };
 
   // §8 pass 5: atmosphere shell — a translucent back-side sphere for a limb glow.
   const atmosphereMaterial = new MeshBasicMaterial({
@@ -143,33 +195,81 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
 
   let animationHandle = 0;
   let previousTimestamp = 0;
+  let currentSpin = 0;
   const renderLoop = (timestamp: number): void => {
     const delta = previousTimestamp === 0 ? 0 : (timestamp - previousTimestamp) / 1000;
     previousTimestamp = timestamp;
-    planet.rotation.y += delta * 0.15; // slow idle spin; not part of the simulation
+    planet.rotation.y += delta * currentSpin;
+    if (planetUsesShader) {
+      planetUniforms.uTime.value = timestamp / 1000;
+    }
     renderer.render(scene, camera);
     animationHandle = requestAnimationFrame(renderLoop);
   };
   animationHandle = requestAnimationFrame(renderLoop);
 
   return {
-    setParameters: (parameters: RenderParameters): void => {
-      planetMaterial.color.setRGB(
-        parameters.planet.surfaceColorRgb.r,
-        parameters.planet.surfaceColorRgb.g,
-        parameters.planet.surfaceColorRgb.b,
+    setParameters: (uniforms: PlanetShaderUniforms): void => {
+      lastSurfaceColor.setRGB(
+        uniforms.surfaceColorRgb.r,
+        uniforms.surfaceColorRgb.g,
+        uniforms.surfaceColorRgb.b,
         SRGBColorSpace,
       );
-      const star_ = parameters.star.colorRgb;
-      starMaterial.color.setRGB(star_.r, star_.g, star_.b, SRGBColorSpace);
-      sunlight.color.setRGB(star_.r, star_.g, star_.b, SRGBColorSpace);
+      if (planetUsesShader) {
+        planetUniforms.uSurfaceColor.value.setRGB(
+          uniforms.surfaceColorRgb.r,
+          uniforms.surfaceColorRgb.g,
+          uniforms.surfaceColorRgb.b,
+        );
+        planetUniforms.uStarColor.value.setRGB(
+          uniforms.starColorRgb.r,
+          uniforms.starColorRgb.g,
+          uniforms.starColorRgb.b,
+        );
+        planetUniforms.uIceFraction.value = uniforms.iceFraction;
+        planetUniforms.uMoltenFactor.value = uniforms.moltenFactor;
+        planetUniforms.uOceanLevel.value = uniforms.oceanLevel;
+        planetUniforms.uTerrainSeed.value = uniforms.terrainSeed;
+        planetUniforms.uTerrainRoughness.value = uniforms.terrainRoughness;
+        planetUniforms.uCloudDensity.value = uniforms.cloudDensity;
+        planetUniforms.uSkyColor.value.setRGB(
+          uniforms.skyColorRgb.r,
+          uniforms.skyColorRgb.g,
+          uniforms.skyColorRgb.b,
+        );
+        planetUniforms.uAtmThickness.value = uniforms.atmosphereThickness;
+      } else {
+        fallbackMaterial.color.copy(lastSurfaceColor);
+      }
 
-      atmosphere.visible = parameters.atmosphere.present;
-      atmosphereMaterial.opacity = parameters.atmosphere.opacity;
+      // Star: color + apparent size from the real angular radius.
+      starMaterial.color.setRGB(
+        uniforms.starColorRgb.r,
+        uniforms.starColorRgb.g,
+        uniforms.starColorRgb.b,
+        SRGBColorSpace,
+      );
+      sunlight.color.setRGB(
+        uniforms.starColorRgb.r,
+        uniforms.starColorRgb.g,
+        uniforms.starColorRgb.b,
+        SRGBColorSpace,
+      );
+      const starScale = Math.max(0.15, Math.min(3, uniforms.starAngularRadius * 120));
+      star.scale.setScalar(starScale);
+
+      // Spin rate (sign sets prograde/retrograde).
+      currentSpin = uniforms.spinRadiansPerSecond;
+
+      // Atmosphere shell (toned to a limb glow rather than a solid band;
+      // Stage 3 replaces this with an in-shader fresnel rim).
+      atmosphere.visible = uniforms.atmospherePresent;
+      atmosphereMaterial.opacity = uniforms.atmosphereThickness * 0.5;
       atmosphereMaterial.color.setRGB(
-        parameters.atmosphere.skyColorRgb.r,
-        parameters.atmosphere.skyColorRgb.g,
-        parameters.atmosphere.skyColorRgb.b,
+        uniforms.skyColorRgb.r,
+        uniforms.skyColorRgb.g,
+        uniforms.skyColorRgb.b,
         SRGBColorSpace,
       );
     },
@@ -188,7 +288,8 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
       star.geometry.dispose();
       starMaterial.dispose();
       planet.geometry.dispose();
-      planetMaterial.dispose();
+      shaderMaterial.dispose();
+      fallbackMaterial.dispose();
       atmosphere.geometry.dispose();
       atmosphereMaterial.dispose();
       renderer.dispose();

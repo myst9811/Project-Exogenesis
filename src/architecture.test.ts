@@ -17,7 +17,7 @@ import * as physicsHabitability from './physics/habitability';
 import * as rendererSurface from './renderer/surface';
 import * as rendererAtmosphere from './renderer/atmosphere';
 import * as rendererStar from './renderer/star';
-import * as rendererParameters from './renderer/parameters';
+import * as rendererShaderUniforms from './renderer/shaderUniforms';
 import * as ai from './ai';
 import * as aiPrompts from './ai/prompts';
 import * as translation from './translation';
@@ -39,7 +39,7 @@ const moduleMap = {
   'renderer/surface': rendererSurface,
   'renderer/atmosphere': rendererAtmosphere,
   'renderer/star': rendererStar,
-  'renderer/parameters': rendererParameters,
+  'renderer/shaderUniforms': rendererShaderUniforms,
   ai: ai,
   'ai/prompts': aiPrompts,
   translation: translation,

@@ -60,15 +60,14 @@ describe('InputPanels', () => {
     expect(stores.history.canUndo()).toBe(true);
   });
 
-  it('changes the spectral class through the select', async () => {
+  it('changes the spectral class through the segmented control', async () => {
     const stores = await seededStores();
     render(
       <StoresProvider stores={stores}>
         <InputPanels />
       </StoresProvider>,
     );
-    const select = screen.getByDisplayValue('G');
-    fireEvent.change(select, { target: { value: 'M' } });
+    fireEvent.click(screen.getByRole('radio', { name: 'M' }));
     await waitFor(() => {
       expect(stores.simulation.getState().configuration?.stellar.spectralClass).toBe('M');
     });
