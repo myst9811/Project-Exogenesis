@@ -82,7 +82,7 @@ export function ArchivePanel({
                 archive.remove(target.configurationHash);
               }}
               onCopyLink={(target) => {
-                void navigator.clipboard?.writeText(
+                void navigator.clipboard.writeText(
                   `${window.location.origin}${window.location.pathname}#w=${target.shareToken}&n=${encodeURIComponent(target.commonName)}`,
                 );
               }}

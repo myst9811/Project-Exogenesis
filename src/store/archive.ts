@@ -132,11 +132,10 @@ export function createArchiveStore(
 
   const remove = (configurationHash: string): void => {
     store.setState((previous) => {
-      const next = { ...previous.entries };
-      delete next[configurationHash];
+      const { [configurationHash]: _removed, ...rest } = previous.entries;
       return {
         ...previous,
-        entries: next,
+        entries: rest,
         activeHash: previous.activeHash === configurationHash ? null : previous.activeHash,
       };
     });

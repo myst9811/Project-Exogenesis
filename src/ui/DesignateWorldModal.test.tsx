@@ -41,7 +41,7 @@ describe('DesignateWorldModal', () => {
         onCancel={vi.fn()}
       />,
     );
-    expect((screen.getByRole('button', { name: /designate/i }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: /designate/i }).hasAttribute('disabled')).toBe(true);
   });
 
   it('shows a validation diagnostic when provided', () => {

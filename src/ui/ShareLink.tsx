@@ -1,23 +1,26 @@
 /**
  * @module ui/ShareLink
  *
- * Copies the current world's shareable URL to the clipboard. The URL is kept
- * in sync with the computed world by the App (ADR-007), so copying the
- * current address is enough — this component does not encode anything itself.
+ * Copies the current world's shareable link, and—when the world is named—a
+ * plain-text "mission brief" (name, designation, science hook, URL) for
+ * pasting into chat. The URL is kept in sync with the world by the App
+ * (ADR-007), including any `n` display-name param, so copying the current
+ * address is sufficient.
  */
 
 import { useState } from 'react';
 import type { JSX } from 'react';
 
-export function ShareLink(): JSX.Element {
-  const [copied, setCopied] = useState(false);
+export function ShareLink({ missionBrief }: { missionBrief?: string }): JSX.Element {
+  const [copied, setCopied] = useState<'link' | 'brief' | null>(null);
 
-  const copy = async (): Promise<void> => {
+  const copy = async (what: 'link' | 'brief'): Promise<void> => {
+    const text = what === 'link' ? window.location.href : (missionBrief ?? window.location.href);
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
+      await navigator.clipboard.writeText(text);
+      setCopied(what);
     } catch {
-      setCopied(false);
+      setCopied(null);
     }
   };
 
@@ -27,14 +30,25 @@ export function ShareLink(): JSX.Element {
         type="button"
         className="tactical-btn accent"
         onClick={() => {
-          void copy();
+          void copy('link');
         }}
       >
-        ⊕ Share Config
+        ⊕ Copy link
       </button>
-      {copied && (
+      {missionBrief !== undefined && (
+        <button
+          type="button"
+          className="tactical-btn"
+          onClick={() => {
+            void copy('brief');
+          }}
+        >
+          Copy mission brief
+        </button>
+      )}
+      {copied !== null && (
         <span className="share-confirm" role="status">
-          Link copied
+          {copied === 'link' ? 'Link copied' : 'Brief copied'}
         </span>
       )}
     </span>

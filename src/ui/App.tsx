@@ -20,6 +20,7 @@ import {
   designateCurrentWorld,
   encodeConfigurationToken,
   loadConfigurationToken,
+  resolveDisplayName,
 } from '../store';
 import type { SimulationDiagnostic } from '../types/configuration';
 import { ArchivePanel } from './ArchivePanel';
@@ -33,7 +34,7 @@ import { StoresProvider } from './StoresProvider';
 import { SystemHeader } from './SystemHeader';
 import { useStore } from './useStore';
 import { WorldReadouts } from './WorldReadouts';
-import { readWorldToken, writeWorldToken } from './worldUrl';
+import { readDisplayName, readWorldToken, writeDisplayName, writeWorldToken } from './worldUrl';
 
 export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory } = {}): JSX.Element {
   const [stores] = useState(createAppStores);
@@ -58,6 +59,11 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
           return;
         }
         if (diagnostics.length === 0) {
+          // Borrow the sharer's name for this session (never auto-archived).
+          const inboundName = readDisplayName();
+          if (inboundName !== null) {
+            stores.ui.setSessionDisplayName(inboundName);
+          }
           return;
         }
         setLinkError(diagnostics[0]?.message ?? 'The shared link could not be loaded.');
@@ -86,17 +92,29 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
           scanTimer = setTimeout(() => {
             setScanning(false);
           }, 800);
+          // A borrowed session name labels only the world it arrived with;
+          // moving to a different world drops it.
+          if (stores.archive.getState().entries[hash] === undefined) {
+            stores.ui.setSessionDisplayName(null);
+          }
         }
         previousHash = hash;
         if (state.configuration !== null) {
           writeWorldToken(encodeConfigurationToken(state.configuration));
+          const { commonName } = resolveDisplayName(stores.archive.getState(), hash);
+          const name = commonName ?? stores.ui.getState().sessionDisplayName;
+          if (name !== null) {
+            writeDisplayName(name);
+          }
         }
       }
     };
-    const unsubscribe = stores.simulation.subscribe(sync);
+    const unsubscribeSimulation = stores.simulation.subscribe(sync);
+    const unsubscribeArchive = stores.archive.subscribe(sync);
     sync();
     return () => {
-      unsubscribe();
+      unsubscribeSimulation();
+      unsubscribeArchive();
       clearTimeout(scanTimer);
     };
   }, [stores]);

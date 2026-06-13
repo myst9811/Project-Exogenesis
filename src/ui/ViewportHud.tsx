@@ -27,9 +27,10 @@ const HZ_LABEL: Record<HabitableZonePosition, string> = {
 const UPDATE_PULSE_MS = 2000;
 
 export function ViewportHud(): JSX.Element | null {
-  const { simulation, archive } = useStores();
+  const { simulation, archive, ui } = useStores();
   const world = useStore(simulation).planetaryState;
   const archiveState = useStore(archive);
+  const sessionDisplayName = useStore(ui).sessionDisplayName;
   const [updated, setUpdated] = useState(false);
   const previousHash = useRef<string | null>(null);
 
@@ -56,7 +57,10 @@ export function ViewportHud(): JSX.Element | null {
     return null;
   }
 
-  const { designation, commonName } = resolveDisplayName(archiveState, world.configurationHash);
+  const resolved = resolveDisplayName(archiveState, world.configurationHash);
+  const { designation } = resolved;
+  // A borrowed name from a shared link shows session-only until archived.
+  const commonName = resolved.commonName ?? sessionDisplayName;
   const spectralClass = world.configuration.stellar.spectralClass;
   const orbitAu = world.configuration.orbital.semiMajorAxisAstronomicalUnits;
   const hzLabel =

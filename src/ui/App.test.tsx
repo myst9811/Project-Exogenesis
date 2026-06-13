@@ -90,4 +90,11 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /load/i }));
     expect(screen.queryByLabelText(/search archive/i)).toBeNull();
   });
+
+  it('borrows a shared name from an inbound link for the session', async () => {
+    const token = encodeConfigurationToken(createEarthBaselineConfiguration());
+    window.history.replaceState(null, '', `#w=${token}&n=Zephyr`);
+    render(<App createRenderer={fakeRenderer} />);
+    expect(await screen.findByText('Zephyr')).toBeTruthy();
+  });
 });
