@@ -16,6 +16,7 @@ import type { PlanetRenderer } from '../renderer/scene/planetRenderer';
 import type { PlanetView } from '../types/render';
 import { MissionIcon } from './MissionIcon';
 import { ModeRail } from './ModeRail';
+import { ViewLabel } from './ViewLabel';
 import { ViewportHud } from './ViewportHud';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
@@ -71,6 +72,12 @@ export function PlanetViewport({
     <div className="viewport-frame">
       <canvas ref={canvasRef} className="planet-viewport" aria-label="planet view" />
       <ModeRail view={view} onSelectView={setView} />
+      {world !== null && (
+        <ViewLabel
+          view={view}
+          semiMajorAxisAu={world.configuration.orbital.semiMajorAxisAstronomicalUnits}
+        />
+      )}
       <ViewportHud />
       {world === null && (
         <div className="viewport-empty">
