@@ -21,6 +21,7 @@ import {
 } from '../store';
 import { DiagnosticsList } from './DiagnosticsList';
 import { InputPanels } from './InputPanels';
+import { MissionIcon } from './MissionIcon';
 import { NarrationPanel } from './NarrationPanel';
 import { PlanetViewport, type PlanetRendererFactory } from './PlanetViewport';
 import { StoresProvider } from './StoresProvider';
@@ -92,6 +93,9 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
   return (
     <StoresProvider stores={stores}>
       <div className={scanning ? 'console scanning' : 'console'}>
+        <div className="scan-indicator" aria-hidden="true">
+          <MissionIcon name="rocket" size={16} state="active" />
+        </div>
         <SystemHeader />
         {linkError !== null && (
           <p className="link-error" role="alert">

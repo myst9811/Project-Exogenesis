@@ -13,6 +13,7 @@ import type { JSX } from 'react';
 import { deriveShaderUniforms } from '../renderer/shaderUniforms';
 import { createPlanetRenderer } from '../renderer/scene/planetRenderer';
 import type { PlanetRenderer } from '../renderer/scene/planetRenderer';
+import { MissionIcon } from './MissionIcon';
 import { ModeRail } from './ModeRail';
 import { ViewportHud } from './ViewportHud';
 import { useStore } from './useStore';
@@ -64,6 +65,12 @@ export function PlanetViewport({
       <canvas ref={canvasRef} className="planet-viewport" aria-label="planet view" />
       <ModeRail />
       <ViewportHud />
+      {world === null && (
+        <div className="viewport-empty">
+          <MissionIcon name="cockpit" size={72} state="idle" />
+          <p>Configure a world to begin.</p>
+        </div>
+      )}
     </div>
   );
 }

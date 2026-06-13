@@ -3,7 +3,7 @@
  * @vitest-environment jsdom
  */
 
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { commitConfiguration, createAppStores, createDefaultConfiguration } from '../store';
@@ -48,6 +48,16 @@ describe('PlanetViewport', () => {
       starAngularRadius: expect.any(Number) as number,
       spinRadiansPerSecond: expect.any(Number) as number,
     });
+  });
+
+  it('shows the empty-deck overlay when no world is computed', () => {
+    const { renderer } = fakeRenderer();
+    render(
+      <StoresProvider stores={createAppStores()}>
+        <PlanetViewport createRenderer={() => renderer} />
+      </StoresProvider>,
+    );
+    expect(screen.getByText('Configure a world to begin.')).not.toBeNull();
   });
 
   it('disposes the renderer on unmount', () => {

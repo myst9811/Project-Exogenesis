@@ -34,6 +34,16 @@ describe('NarrationPanel', () => {
     expect(screen.getByText(/narration is disabled/i)).toBeTruthy();
   });
 
+  it('shows the no-data hint before any narration is generated', async () => {
+    const client: NarrationClient = { generate: () => Promise.resolve('') };
+    render(
+      <StoresProvider stores={await seededStores()}>
+        <NarrationPanel client={client} />
+      </StoresProvider>,
+    );
+    expect(screen.getByText('No field notes yet — request a narration above.')).not.toBeNull();
+  });
+
   it('generates and renders a description, sending the computed world to the client', async () => {
     const generate = vi.fn<NarrationClient['generate']>(() =>
       Promise.resolve('A temperate blue world.'),
