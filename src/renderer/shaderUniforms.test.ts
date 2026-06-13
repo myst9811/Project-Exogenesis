@@ -4,14 +4,29 @@
 
 import { describe, expect, it } from 'vitest';
 
+import { createEarthBaselineConfiguration } from '../physics/configuration/earthBaseline';
+import { hashConfiguration } from '../physics/configuration/manifest';
+import { computePlanetaryState } from '../physics';
+import { assessHabitability } from '../physics/habitability';
+import type { PlanetConfiguration } from '../types/configuration';
+import type { PlanetaryState } from '../types/physics';
 import {
   deriveCloudDensity,
   deriveIceFraction,
   deriveMoltenFactor,
   deriveOceanLevel,
+  deriveShaderUniforms,
   deriveSpin,
   deriveTerrainSeed,
 } from './shaderUniforms';
+
+async function worldFor(
+  mutate: (c: PlanetConfiguration) => void = () => undefined,
+): Promise<PlanetaryState> {
+  const config = createEarthBaselineConfiguration();
+  mutate(config);
+  return computePlanetaryState(await hashConfiguration(config));
+}
 
 describe('deriveIceFraction', () => {
   it('is a small cap for Earth (288 K)', () => {
@@ -84,5 +99,37 @@ describe('deriveTerrainSeed', () => {
   });
   it('differs for different hashes', () => {
     expect(deriveTerrainSeed('aaaaaaaa')).not.toBe(deriveTerrainSeed('bbbbbbbb'));
+  });
+});
+
+describe('deriveShaderUniforms', () => {
+  it('gives Earth oceans, modest ice, clouds, and a present atmosphere', async () => {
+    const world = await worldFor();
+    const u = deriveShaderUniforms(world, assessHabitability(world).liquidWater);
+    expect(u.oceanLevel).toBeGreaterThan(0);
+    expect(u.iceFraction).toBeGreaterThan(0);
+    expect(u.iceFraction).toBeLessThan(0.5);
+    expect(u.cloudDensity).toBeGreaterThan(0);
+    expect(u.atmospherePresent).toBe(true);
+    expect(u.starAngularRadius).toBeGreaterThan(0);
+  });
+
+  it('gives an airless world no clouds and no atmosphere', async () => {
+    const world = await worldFor((c) => {
+      c.atmosphere.partialPressuresKilopascals = {};
+    });
+    const u = deriveShaderUniforms(world, assessHabitability(world).liquidWater);
+    expect(u.cloudDensity).toBe(0);
+    expect(u.atmospherePresent).toBe(false);
+    expect(u.oceanLevel).toBe(0);
+  });
+
+  it('is deterministic and matches the configuration hash for the terrain seed', async () => {
+    const world = await worldFor();
+    const water = assessHabitability(world).liquidWater;
+    expect(deriveShaderUniforms(world, water)).toEqual(deriveShaderUniforms(world, water));
+    expect(deriveShaderUniforms(world, water).terrainSeed).toBe(
+      deriveTerrainSeed(world.configurationHash),
+    );
   });
 });

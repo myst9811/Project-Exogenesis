@@ -9,6 +9,12 @@
  */
 
 import type { PlanetCompositionClass } from '../types/configuration';
+import type { LiquidWaterAssessment } from '../types/habitability';
+import type { PlanetaryState } from '../types/physics';
+import type { PlanetShaderUniforms } from '../types/render';
+import { deriveAtmosphereAppearance } from './atmosphere';
+import { deriveBlackbodyColor, deriveStarAngularRadius } from './star';
+import { deriveSurfaceColor } from './surface';
 
 /** Clamps a value to [0, 1]. */
 function clamp01(value: number): number {
@@ -78,4 +84,48 @@ export function deriveSpin(rotationPeriodHours: number): number {
     Math.max(10, (Math.abs(hours) / 24) * VISUAL_DAY_SECONDS),
   );
   return (Math.sign(hours) * (2 * Math.PI)) / visualSeconds;
+}
+
+/**
+ * Derives the complete planet-shader uniform set from a computed world and its
+ * liquid-water assessment.
+ *
+ * @param state - The computed planetary state
+ * @param liquidWater - The computed liquid-water assessment (from habitability)
+ * @returns The shader uniforms
+ */
+export function deriveShaderUniforms(
+  state: PlanetaryState,
+  liquidWater: LiquidWaterAssessment,
+): PlanetShaderUniforms {
+  const composition = state.configuration.planetary.compositionClass;
+  const waterVaporKilopascals =
+    state.configuration.atmosphere.partialPressuresKilopascals.H2O ?? 0;
+  const starColorRgb = deriveBlackbodyColor(state.stellar.effectiveTemperatureKelvin);
+  const atmosphere = deriveAtmosphereAppearance(
+    state.atmosphere.surfacePressureKilopascals,
+    starColorRgb,
+  );
+
+  return {
+    surfaceColorRgb: deriveSurfaceColor(composition, state.climate.bondAlbedo),
+    iceFraction: deriveIceFraction(state.climate.surfaceTemperatureKelvin),
+    oceanLevel: deriveOceanLevel(composition, liquidWater.possible, waterVaporKilopascals),
+    moltenFactor: deriveMoltenFactor(state.climate.surfaceTemperatureKelvin),
+    terrainSeed: deriveTerrainSeed(state.configurationHash),
+    terrainRoughness: TERRAIN_ROUGHNESS[composition],
+    atmospherePresent: atmosphere.present,
+    skyColorRgb: atmosphere.skyColorRgb,
+    atmosphereThickness: atmosphere.opacity,
+    cloudDensity: deriveCloudDensity(
+      waterVaporKilopascals,
+      state.atmosphere.surfacePressureKilopascals,
+    ),
+    starColorRgb,
+    starAngularRadius: deriveStarAngularRadius(
+      state.stellar.radiusMeters,
+      state.orbit.semiMajorAxisMeters,
+    ),
+    spinRadiansPerSecond: deriveSpin(state.configuration.rotation.rotationPeriodHours),
+  };
 }
