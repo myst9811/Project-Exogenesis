@@ -1302,7 +1302,8 @@ body {
   border-left: 1px solid var(--border-active);
   padding: 1.2rem;
   overflow-y: auto;
-  z-index: 40;
+  /* Above the sticky system header (z-index 50) so its title is not clipped. */
+  z-index: 60;
   box-shadow: -10px 0 30px rgba(0, 0, 3, 0.5);
 }
 .archive-panel__header {
