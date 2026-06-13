@@ -145,6 +145,10 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
     uTerrainSeed: { value: 0 },
     uTerrainRoughness: { value: 0.5 },
     uLightDir: { value: LIGHT_DIR.clone() },
+    uCloudDensity: { value: 0 },
+    uSkyColor: { value: new Color(0, 0, 0) },
+    uAtmThickness: { value: 0 },
+    uTime: { value: 0 },
   };
   const shaderMaterial = new ShaderMaterial({
     vertexShader: PLANET_VERTEX_SHADER,
@@ -196,6 +200,9 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
     const delta = previousTimestamp === 0 ? 0 : (timestamp - previousTimestamp) / 1000;
     previousTimestamp = timestamp;
     planet.rotation.y += delta * currentSpin;
+    if (planetUsesShader) {
+      planetUniforms.uTime.value = timestamp / 1000;
+    }
     renderer.render(scene, camera);
     animationHandle = requestAnimationFrame(renderLoop);
   };
@@ -225,6 +232,13 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
         planetUniforms.uOceanLevel.value = uniforms.oceanLevel;
         planetUniforms.uTerrainSeed.value = uniforms.terrainSeed;
         planetUniforms.uTerrainRoughness.value = uniforms.terrainRoughness;
+        planetUniforms.uCloudDensity.value = uniforms.cloudDensity;
+        planetUniforms.uSkyColor.value.setRGB(
+          uniforms.skyColorRgb.r,
+          uniforms.skyColorRgb.g,
+          uniforms.skyColorRgb.b,
+        );
+        planetUniforms.uAtmThickness.value = uniforms.atmosphereThickness;
       } else {
         fallbackMaterial.color.copy(lastSurfaceColor);
       }

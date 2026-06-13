@@ -28,6 +28,10 @@ export const PLANET_FRAGMENT_SHADER = /* glsl */ `
   uniform float uTerrainSeed;
   uniform float uTerrainRoughness;
   uniform vec3 uLightDir;     // world-space direction toward the star
+  uniform float uCloudDensity; // cloud cover, 0 → 1, from water vapor × pressure
+  uniform vec3 uSkyColor;      // Rayleigh limb tint of the stellar spectrum
+  uniform float uAtmThickness; // atmospheric column depth, 0 → 1
+  uniform float uTime;         // seconds, for cloud drift
 
   varying vec3 vNormal;
   varying vec3 vObjectPos;
@@ -82,6 +86,18 @@ export const PLANET_FRAGMENT_SHADER = /* glsl */ `
     float day = smoothstep(-0.2, 0.3, ndl);
     vec3 lit = base * (0.12 + 0.95 * day) * uStarColor;
     lit += uSurfaceColor * uMoltenFactor * (1.0 - day) * vec3(1.0, 0.3, 0.08);
+
+    // Drifting clouds (lit by day), only where the atmosphere holds water.
+    if (uCloudDensity > 0.0) {
+      float c = fbm(dir * 3.5 + vec3(uTime * 0.01, 0.0, 0.0));
+      float cloud = smoothstep(1.0 - uCloudDensity, 1.0, c) * uCloudDensity;
+      lit = mix(lit, vec3(1.0) * (0.1 + 0.9 * day) * uStarColor, cloud * 0.8);
+    }
+
+    // Fresnel atmospheric limb: brightens the disc edge facing the viewer,
+    // tinted by the sky color and stronger on the day side.
+    float fresnel = pow(1.0 - clamp(dot(normalize(vNormal), vec3(0.0, 0.0, 1.0)), 0.0, 1.0), 3.0);
+    lit += uSkyColor * fresnel * uAtmThickness * (0.3 + 0.7 * day);
 
     gl_FragColor = vec4(lit, 1.0);
   }
