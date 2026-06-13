@@ -1183,3 +1183,77 @@ body {
 .world-identity--card .world-identity__name {
   font-size: var(--text-data);
 }
+
+/* ── Modal shell ── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 3, 0.7);
+  z-index: 50;
+}
+.modal {
+  background: var(--void-panel);
+  border: 1px solid var(--border-active);
+  border-radius: 6px;
+  padding: 1.5rem;
+  min-width: 22rem;
+  max-width: 30rem;
+  box-shadow: 0 0 30px var(--cyan-glow);
+}
+.modal-eyebrow {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  color: var(--text-secondary);
+  margin: 0;
+}
+.modal-title {
+  font-family: var(--font-display);
+  color: var(--cyan-bright);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-data);
+  margin: 0.2rem 0 1rem;
+}
+.designate-designation {
+  font-family: var(--font-data);
+  color: var(--text-readout);
+  margin: 0 0 0.5rem;
+}
+.designate-readouts {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+.designate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+}
+.designate-field input {
+  background: var(--void-deep);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  color: var(--text-readout);
+  font-family: var(--font-data);
+  padding: 0.5rem;
+}
+.designate-error {
+  color: var(--status-critical);
+  font-size: var(--text-caption);
+  margin: 0.5rem 0 0;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
