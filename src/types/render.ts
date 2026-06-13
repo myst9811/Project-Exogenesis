@@ -71,3 +71,6 @@ export interface PlanetShaderUniforms {
   /** Visual spin in rad/s; sign sets prograde/retrograde. */
   spinRadiansPerSecond: number;
 }
+
+/** Which curated camera framing of the computed world the viewport shows. */
+export type PlanetView = 'observation' | 'surface' | 'system';
