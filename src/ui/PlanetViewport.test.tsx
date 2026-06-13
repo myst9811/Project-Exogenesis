@@ -20,7 +20,7 @@ function fakeRenderer(): {
 } {
   const setParameters = vi.fn();
   const dispose = vi.fn();
-  const renderer: PlanetRenderer = { setParameters, resize: vi.fn(), dispose };
+  const renderer: PlanetRenderer = { setParameters, setView: vi.fn(), resize: vi.fn(), dispose };
   return { renderer, setParameters, dispose };
 }
 

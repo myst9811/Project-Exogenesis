@@ -21,7 +21,7 @@ afterEach(() => {
 
 /** A fake renderer so the app mounts without a WebGL context in jsdom. */
 function fakeRenderer(): PlanetRenderer {
-  return { setParameters: vi.fn(), resize: vi.fn(), dispose: vi.fn() };
+  return { setParameters: vi.fn(), setView: vi.fn(), resize: vi.fn(), dispose: vi.fn() };
 }
 
 describe('App', () => {

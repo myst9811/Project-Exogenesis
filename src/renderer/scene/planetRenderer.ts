@@ -23,12 +23,14 @@ import {
   Color,
   DirectionalLight,
   Float32BufferAttribute,
+  Group,
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
   PerspectiveCamera,
   Points,
   PointsMaterial,
+  RingGeometry,
   Scene,
   ShaderMaterial,
   SphereGeometry,
@@ -37,13 +39,16 @@ import {
   WebGLRenderer,
 } from 'three';
 
-import type { PlanetShaderUniforms } from '../../types/render';
+import type { PlanetShaderUniforms, PlanetView } from '../../types/render';
+import { deriveCameraTarget } from '../cameraView';
 import { PLANET_FRAGMENT_SHADER, PLANET_VERTEX_SHADER } from './planetShaders';
 
 /** A mounted renderer driving one canvas. */
 export interface PlanetRenderer {
   /** Applies derived visual parameters to the scene. */
   setParameters: (uniforms: PlanetShaderUniforms) => void;
+  /** Selects which camera framing of the world to show. */
+  setView: (view: PlanetView) => void;
   /** Resizes the drawing buffer and camera to the given pixel size. */
   resize: (width: number, height: number) => void;
   /** Releases GPU resources and stops the animation loop. */
@@ -193,9 +198,45 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
   atmosphere.visible = false;
   scene.add(atmosphere);
 
+  // System-view schematic (CLAUDE.md §6: a labeled, deliberately not-to-scale
+  // diagram, not a literal orbit). A star marker at a schematic center with a
+  // thin ring passing through the planet at the origin. Unlit basic materials
+  // — it is a diagram, not a body. Hidden outside the System view.
+  const SCHEMATIC_CENTER_X = -3;
+  const schematic = new Group();
+  const orbitRadius = Math.abs(SCHEMATIC_CENTER_X);
+  const orbitRingMaterial = new MeshBasicMaterial({
+    color: 0x2a_8a_b5,
+    transparent: true,
+    opacity: 0.5,
+    side: BackSide,
+  });
+  const orbitRing = new Mesh(
+    new RingGeometry(orbitRadius - 0.015, orbitRadius + 0.015, 128),
+    orbitRingMaterial,
+  );
+  orbitRing.rotation.x = -Math.PI / 2; // lie flat in the XZ plane
+  orbitRing.position.x = SCHEMATIC_CENTER_X;
+  schematic.add(orbitRing);
+  const starMarkerMaterial = new MeshBasicMaterial({ color: 0xff_d8_8a });
+  const starMarker = new Mesh(new SphereGeometry(0.35, 24, 24), starMarkerMaterial);
+  starMarker.position.set(SCHEMATIC_CENTER_X, 0, 0);
+  schematic.add(starMarker);
+  schematic.renderOrder = 1;
+  schematic.visible = false;
+  scene.add(schematic);
+
   let animationHandle = 0;
   let previousTimestamp = 0;
   let currentSpin = 0;
+  const cameraTargetPosition = new Vector3(0, 0, 3.2);
+  const focusPoint = new Vector3(0, 0, 0);
+  const applyView = (view: PlanetView): void => {
+    const target = deriveCameraTarget(view);
+    cameraTargetPosition.set(target.positionX, target.positionY, target.positionZ);
+    focusPoint.set(target.schematicVisible ? -1.5 : 0, 0, 0);
+    schematic.visible = target.schematicVisible;
+  };
   const renderLoop = (timestamp: number): void => {
     const delta = previousTimestamp === 0 ? 0 : (timestamp - previousTimestamp) / 1000;
     previousTimestamp = timestamp;
@@ -203,6 +244,9 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
     if (planetUsesShader) {
       planetUniforms.uTime.value = timestamp / 1000;
     }
+    // Smoothly ease the camera toward the selected view's target.
+    camera.position.lerp(cameraTargetPosition, 0.08);
+    camera.lookAt(focusPoint);
     renderer.render(scene, camera);
     animationHandle = requestAnimationFrame(renderLoop);
   };
@@ -273,6 +317,9 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
         SRGBColorSpace,
       );
     },
+    setView: (view: PlanetView): void => {
+      applyView(view);
+    },
     resize: (width: number, height: number): void => {
       if (width <= 0 || height <= 0) {
         return;
@@ -292,6 +339,10 @@ export function createPlanetRenderer(canvas: HTMLCanvasElement): PlanetRenderer 
       fallbackMaterial.dispose();
       atmosphere.geometry.dispose();
       atmosphereMaterial.dispose();
+      orbitRing.geometry.dispose();
+      orbitRingMaterial.dispose();
+      starMarker.geometry.dispose();
+      starMarkerMaterial.dispose();
       renderer.dispose();
     },
   };
