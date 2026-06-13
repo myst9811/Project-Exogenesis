@@ -36,12 +36,24 @@ export type { HistoryState, HistoryStore } from './history';
 export {
   commitConfiguration,
   createAppStores,
+  designateCurrentWorld,
   encodeConfigurationToken,
   loadConfigurationToken,
   redoConfiguration,
   undoConfiguration,
 } from './app';
 export type { AppStores } from './app';
+
+export { ARCHIVE_HARD_CAP, ARCHIVE_SOFT_WARN_AT, createArchiveStore } from './archive';
+export type { ArchiveStore, DesignateInput } from './archive';
+export { resolveDisplayName, validateCommonName } from './archiveValidation';
+export type { NameValidation, ResolvedDisplayName } from './archiveValidation';
+export type {
+  ArchiveSortKey,
+  ArchiveState,
+  CatalogSnapshot,
+  WorldArchiveEntry,
+} from '../types/archive';
 
 // The default world the UI seeds with. Re-exported through the store so the
 // UI obtains it via its sanctioned gateway rather than importing physics
