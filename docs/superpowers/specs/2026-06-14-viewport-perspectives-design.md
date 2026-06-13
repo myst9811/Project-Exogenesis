@@ -107,3 +107,9 @@ All changes live in `renderer/` (camera, scene) and `ui/` (rail, overlay, viewpo
 ## 8. Verification reality
 
 As with the shader and icons, the camera framings can only be judged by running the app. Expect one or two visual round-trips to settle the Surface proximity/tilt and the System schematic's ring size and label placement. Work is staged so each step builds, tests green, and is viewable: (1) `PlanetView` + `deriveCameraTarget` + tests; (2) renderer `setView` + camera lerp + schematic group; (3) rail as control + viewport state; (4) `ViewLabel` overlay; (5) verification + visual gate.
+
+---
+
+## Status: Implemented (2026-06-14)
+
+Shipped and visually verified by the project owner. The mode rail is now a working camera view-switcher: Observation (default orbital framing), Surface (close terrain pass), and System (pulled-back, labeled "SCHEMATIC · NOT TO SCALE" orbit with the real AU). A pure `deriveCameraTarget` (unit-tested) drives the renderer's `setView`, which lerps the camera each frame; the System schematic group toggles with the view. `ViewLabel` shows the active view + honest orbit note. Pure renderer/ui chrome; no physics/store/translation/AI changes. All tests green; coverage gates pass; build clean.

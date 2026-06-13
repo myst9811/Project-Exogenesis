@@ -108,3 +108,9 @@ No physics, translation, store, or renderer coverage is affected; their gates ar
 ## 9. Verification reality
 
 As with the shader, rendered appearance can only be judged by running the app. Expect one or two visual round-trips to settle the recolor treatment and rail sizing. The work is staged so each step builds, tests green, and is viewable: (1) cleaned assets + `MissionIcon` + tests; (2) header brand + favicon; (3) mode rail; (4) states.
+
+---
+
+## Status: Implemented (2026-06-13 → 2026-06-14)
+
+Shipped: rocket brand mark + SVG favicon, the `MissionIcon` primitive, and the empty-deck / no-data / loading states. The mode rail introduced here evolved — after a visual review showed the locked, flattened icons were illegible and inert — into a working camera view-switcher (Observation / Surface / System); see `2026-06-14-viewport-perspectives-design.md`. The three icons now label live view controls rather than locked roadmap glyphs. Pure UI chrome throughout; no physics/store/renderer-logic changes beyond the camera control. All tests green; coverage gates pass; build clean.
