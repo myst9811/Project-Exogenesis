@@ -1022,3 +1022,25 @@ body {
     min-height: 0;
   }
 }
+
+/* ── Mission icons (UI chrome) ── */
+.mission-icon {
+  display: inline-flex;
+  line-height: 0;
+  color: var(--cyan-mid);
+}
+.mission-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.mission-icon--active {
+  color: var(--cyan-bright);
+  filter: drop-shadow(0 0 6px var(--cyan-glow));
+}
+.mission-icon--locked {
+  color: var(--text-ghost);
+}
+.mission-icon--idle {
+  color: var(--cyan-mid);
+}
