@@ -617,3 +617,16 @@ Fail: they describe it as "a save file" or don't understand designation vs. name
 ---
 
 *This spec describes what to build and why. Implementation plans belong in `docs/superpowers/plans/`.*
+
+---
+
+## Status: Phase 1 implemented (2026-06-14)
+
+Phases 1a–1d shipped and visually verified by the project owner:
+
+- **1a — data layer:** archive types, `validateCommonName` + `resolveDisplayName` (100%-tested pure helpers), `localStorage` persistence adapter (corrupt-data + quota safe), the archive store (CRUD, sort/filter, capacity guard), and integration into `AppStores` with hydration and the `designateCurrentWorld` action.
+- **1b — designate + HUD:** `WorldIdentity`, common-name display in the HUD, `DesignateWorldModal`, and the header `Designate World` button.
+- **1c — archive panel:** `WorldArchiveCard`, the `ArchivePanel` (search/sort/load/rename/delete), and the header `Exploration Archive` toggle.
+- **1d — enhanced sharing:** the `n` display-name URL param, `sessionDisplayName` for borrowed names, the extended `ShareLink` (copy link + mission brief), and inbound-name handling.
+
+Capacity follows the resolved decision: soft-warn at 180, hard cap at 200, no silent eviction. Cosmetic metadata only — no physics/renderer/translation/AI-prompt changes. Recorded as ADR-008. Phase 2 (AI name suggestions) and Phase 3 (public catalog) remain separate, later specs.
