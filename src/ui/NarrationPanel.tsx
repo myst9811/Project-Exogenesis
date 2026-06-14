@@ -18,18 +18,18 @@ import {
   type AIContent,
   type AIRequestStatus,
   type NarrationClient,
+  createNarrationClientFromEnv,
   explainMechanism,
   narrateWorld,
   speculateEcology,
 } from '../ai';
-import { createGeminiClientFromEnv } from '../ai/providers/gemini';
 import { MissionIcon } from './MissionIcon';
 import type { PlanetaryState } from '../types/physics';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
 
 export function NarrationPanel({
-  client = createGeminiClientFromEnv(),
+  client = createNarrationClientFromEnv(),
 }: {
   client?: NarrationClient | null;
 }): JSX.Element {

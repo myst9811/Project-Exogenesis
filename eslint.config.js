@@ -231,6 +231,17 @@ export default tseslint.config(
     },
   },
 
+  // ── Vercel serverless functions (Node runtime) ──
+  // The /api function runs on Node, not in the browser; it needs the `process`
+  // global. It imports only the model SDK (no physics/renderer/ui), so the
+  // architectural bans above do not apply here.
+  {
+    files: ['api/**/*.ts'],
+    languageOptions: {
+      globals: { process: 'readonly' },
+    },
+  },
+
   // ── Test files may cross module boundaries ──
   // The architectural import boundaries (above) protect the production
   // dependency graph and bundle. Test files are not part of that graph and

@@ -7,6 +7,8 @@
  */
 interface ImportMetaEnv {
   readonly VITE_GOOGLE_AI_API_KEY?: string;
+  /** When 'true'/'1' (deployed build), the client uses the /api/generate proxy. */
+  readonly VITE_AI_PROXY?: string;
 }
 
 interface ImportMeta {

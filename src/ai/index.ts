@@ -15,3 +15,5 @@ export { narrateWorld } from './narrator';
 export { explainMechanism } from './educator';
 export { speculateEcology } from './speculator';
 export { parseNameSuggestions, suggestPlanetNames } from './namer';
+export { createProxyClient } from './providers/proxy';
+export { createNarrationClientFromEnv } from './providers/clientFromEnv';
