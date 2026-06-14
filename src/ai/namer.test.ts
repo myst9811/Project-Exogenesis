@@ -2,9 +2,13 @@
  * @module ai/namer.test
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { parseNameSuggestions } from './namer';
+import { hashConfiguration } from '../physics/configuration/manifest';
+import { computePlanetaryState } from '../physics';
+import { createEarthBaselineConfiguration } from '../physics/configuration/earthBaseline';
+import type { NarrationClient, NarrationRequest } from './client';
+import { parseNameSuggestions, suggestPlanetNames } from './namer';
 
 describe('parseNameSuggestions', () => {
   it('parses three "Name — rationale" lines', () => {
@@ -42,5 +46,30 @@ describe('parseNameSuggestions', () => {
   it('returns an empty array for empty or garbage input', () => {
     expect(parseNameSuggestions('')).toEqual([]);
     expect(parseNameSuggestions('   \n  \n')).toEqual([]);
+  });
+});
+
+describe('suggestPlanetNames', () => {
+  it('sends the name system instruction and returns parsed suggestions', async () => {
+    const generate = vi.fn((_request: NarrationRequest) =>
+      Promise.resolve('Aurelia — golden sun\nVesper — cool twilight\nThalassa — ocean world'),
+    );
+    const client: NarrationClient = { generate };
+    const manifest = await hashConfiguration(createEarthBaselineConfiguration());
+    const state = computePlanetaryState(manifest);
+
+    const suggestions = await suggestPlanetNames(client, state);
+
+    expect(suggestions.map((s) => s.name)).toEqual(['Aurelia', 'Vesper', 'Thalassa']);
+    const request = generate.mock.calls[0]?.[0];
+    expect(request?.systemInstruction).toContain('proposing common names');
+    expect(request?.userPrompt).toContain('surfaceTemperatureKelvin');
+  });
+
+  it('propagates a client rejection', async () => {
+    const client: NarrationClient = { generate: () => Promise.reject(new Error('rate limit')) };
+    const manifest = await hashConfiguration(createEarthBaselineConfiguration());
+    const state = computePlanetaryState(manifest);
+    await expect(suggestPlanetNames(client, state)).rejects.toThrow('rate limit');
   });
 });

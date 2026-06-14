@@ -10,7 +10,12 @@
  */
 
 import type { NameSuggestion } from '../types/ai';
+import type { HabitabilityAssessment } from '../types/habitability';
+import type { PlanetaryState } from '../types/physics';
 import { validateCommonName } from '../store/archiveValidation';
+import type { NarrationClient } from './client';
+import { buildPlanetaryContext } from './context';
+import { buildPlanetNamePrompt, PLANET_NAME_SYSTEM_V1 } from './prompts/planetName.v1';
 
 const MAX_SUGGESTIONS = 3;
 
@@ -45,4 +50,24 @@ export function parseNameSuggestions(raw: string): NameSuggestion[] {
     suggestions.push({ name: validation.value, rationale: rationalePart.trim() });
   }
   return suggestions;
+}
+
+/**
+ * Asks the client for three cosmetic name suggestions for a computed world.
+ *
+ * @param client - The narration client (provider adapter or fake)
+ * @param state - The computed planetary state
+ * @param habitability - Optional habitability assessment for richer context
+ * @returns Up to three validated {@link NameSuggestion}s
+ */
+export async function suggestPlanetNames(
+  client: NarrationClient,
+  state: PlanetaryState,
+  habitability?: HabitabilityAssessment,
+): Promise<NameSuggestion[]> {
+  const text = await client.generate({
+    systemInstruction: PLANET_NAME_SYSTEM_V1,
+    userPrompt: buildPlanetNamePrompt(buildPlanetaryContext(state, habitability)),
+  });
+  return parseNameSuggestions(text);
 }
