@@ -38,7 +38,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     typeof systemInstruction !== 'string' ||
     typeof userPrompt !== 'string' ||
     userPrompt.length === 0 ||
-    userPrompt.length > MAX_PROMPT_CHARS
+    userPrompt.length > MAX_PROMPT_CHARS ||
+    systemInstruction.length > MAX_PROMPT_CHARS
   ) {
     res.status(400).json({ error: 'Invalid request.' });
     return;
