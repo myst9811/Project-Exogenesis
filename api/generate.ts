@@ -25,9 +25,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     res.status(503).json({ error: 'AI is not configured.' });
     return;
   }
-  const body = req.body as { systemInstruction?: unknown; userPrompt?: unknown };
-  const systemInstruction = body.systemInstruction;
-  const userPrompt = body.userPrompt;
+  const body: unknown = req.body;
+  if (typeof body !== 'object' || body === null) {
+    res.status(400).json({ error: 'Invalid request.' });
+    return;
+  }
+  const { systemInstruction, userPrompt } = body as {
+    systemInstruction?: unknown;
+    userPrompt?: unknown;
+  };
   if (
     typeof systemInstruction !== 'string' ||
     typeof userPrompt !== 'string' ||
