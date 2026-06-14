@@ -130,10 +130,10 @@ Vercel auto-detects the Vite framework and the `/api` function. The rewrite send
 
 The function targets Node, not the browser. The current single `tsconfig.json` includes only `src/**` + config files with the DOM lib, so `api/` would either be untyped or wrongly typed.
 
-- Add **`tsconfig.api.json`**: `lib: ["ES2023"]` (no DOM), `types: ["node"]`, `include: ["api/**/*.ts"]`, `noEmit: true`, extends the strict options. Add `@types/node` as a dev dependency.
+- Add **`api/tsconfig.json`** (named so eslint's `projectService` discovers it as the *nearest* config for `api/` files): `lib: ["ES2023"]` (no DOM), `types: ["node"]`, `include: ["**/*.ts"]`, `noEmit: true`, strict options. Add `@types/node` and `@vercel/node` as dev dependencies.
 - Update scripts so the gate covers both:
-  - `"typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.api.json"`
-  - `"build": "tsc --noEmit && tsc --noEmit -p tsconfig.api.json && vite build"`
+  - `"typecheck": "tsc --noEmit && tsc --noEmit -p api/tsconfig.json"`
+  - `"build": "tsc --noEmit && tsc --noEmit -p api/tsconfig.json && vite build"`
 - Add an eslint override block for `api/**/*.ts`: Node environment, allows `process`/server globals; the existing architectural import bans (no physics/renderer/ui) still apply — the function imports only `@google/genai`.
 
 ### 3.6 Env vars
@@ -180,3 +180,9 @@ Existing suites stay green: the UI call sites swap a factory but the injected-cl
 - Rate limiting, analytics, monitoring, custom domain, auth.
 - Streaming AI responses.
 - Any change to physics/render/store/translation or the AI prompts/orchestration.
+
+---
+
+## Status: Implemented (2026-06-14)
+
+Shipped: the `api/generate.ts` serverless proxy (key server-side), `createProxyClient`, the `createNarrationClientFromEnv` selector (direct/proxy/none) with both call sites swapped, `vercel.json` (Vite preset + SPA rewrite), `api/tsconfig.json` + lint scope for the Node function, `.env.example` docs, `DEPLOYMENT.md`, and ADR-009. The Gemini key is never bundled. (The Node tsconfig is `api/tsconfig.json`, not a root `tsconfig.api.json`, so eslint's project service discovers it as the nearest config for `api/` files.) The actual Vercel↔GitHub connection and env-var entry are performed in the Vercel dashboard per `DEPLOYMENT.md`. Rate limiting remains a documented future step.
