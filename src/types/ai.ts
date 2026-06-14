@@ -30,3 +30,11 @@ export interface AIContent {
 
 /** Lifecycle status of an asynchronous AI generation, for UI loading states. */
 export type AIRequestStatus = 'idle' | 'generating' | 'ready' | 'error';
+
+/** One AI-suggested cosmetic common name with its rationale. Never a simulation value. */
+export interface NameSuggestion {
+  /** A candidate common name; guaranteed to pass validateCommonName. */
+  name: string;
+  /** One sentence tying the name to a computed property (temperature, composition, HZ). */
+  rationale: string;
+}

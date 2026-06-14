@@ -23,6 +23,8 @@ import {
   resolveDisplayName,
 } from '../store';
 import type { SimulationDiagnostic } from '../types/configuration';
+import { type NameSuggestion, type NarrationClient, suggestPlanetNames } from '../ai';
+import { createGeminiClientFromEnv } from '../ai/providers/gemini';
 import { ArchivePanel } from './ArchivePanel';
 import { DesignateWorldModal } from './DesignateWorldModal';
 import { DiagnosticsList } from './DiagnosticsList';
@@ -210,6 +212,9 @@ function DesignateModalContainer({
 }): JSX.Element | null {
   const sim = useStore(stores.simulation);
   const archive = useStore(stores.archive);
+  const [nameClient] = useState<NarrationClient | null>(() => createGeminiClientFromEnv());
+  const [suggestions, setSuggestions] = useState<readonly NameSuggestion[]>([]);
+  const [suggestStatus, setSuggestStatus] = useState<'idle' | 'generating' | 'error'>('idle');
   const world = sim.planetaryState;
   if (world === null) {
     return null;
@@ -217,6 +222,20 @@ function DesignateModalContainer({
   const designation = `EXO-${world.configurationHash.slice(0, 6).toUpperCase()}`;
   const hzLabel =
     world.habitableZone === null ? 'OUT OF RANGE' : world.habitableZone.position.toUpperCase();
+  const requestSuggestions =
+    nameClient === null
+      ? undefined
+      : (): void => {
+          setSuggestStatus('generating');
+          void suggestPlanetNames(nameClient, world, sim.habitability ?? undefined)
+            .then((result) => {
+              setSuggestions(result);
+              setSuggestStatus('idle');
+            })
+            .catch(() => {
+              setSuggestStatus('error');
+            });
+        };
   return (
     <DesignateWorldModal
       designation={designation}
@@ -227,6 +246,9 @@ function DesignateModalContainer({
       }}
       initialName={archive.entries[world.configurationHash]?.commonName ?? ''}
       diagnostics={diagnostics}
+      suggestions={suggestions}
+      suggestStatus={suggestStatus}
+      {...(requestSuggestions !== undefined ? { onRequestSuggestions: requestSuggestions } : {})}
       onConfirm={onConfirm}
       onCancel={onCancel}
     />

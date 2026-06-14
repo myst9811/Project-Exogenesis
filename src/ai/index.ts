@@ -8,9 +8,10 @@
  * physics *types* only and never produces or influences simulation values.
  */
 
-export type { AIContent, AIContentKind, AIRequestStatus } from '../types/ai';
+export type { AIContent, AIContentKind, AIRequestStatus, NameSuggestion } from '../types/ai';
 export type { NarrationClient, NarrationRequest } from './client';
 export { buildPlanetaryContext } from './context';
 export { narrateWorld } from './narrator';
 export { explainMechanism } from './educator';
 export { speculateEcology } from './speculator';
+export { parseNameSuggestions, suggestPlanetNames } from './namer';

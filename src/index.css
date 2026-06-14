@@ -1342,3 +1342,57 @@ body {
   color: var(--text-secondary);
   font-size: var(--text-caption);
 }
+
+/* ── Designate: AI name suggestions ── */
+.designate-suggest {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.designate-suggest__header {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  color: var(--text-secondary);
+  margin: 0.4rem 0 0;
+}
+.designate-suggest__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.designate-suggest__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  width: 100%;
+  text-align: left;
+  background: var(--void-raised);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+.designate-suggest__item:hover {
+  border-color: var(--border-active);
+}
+.designate-suggest__name {
+  font-family: var(--font-display);
+  color: var(--cyan-bright);
+  letter-spacing: var(--tracking-data);
+}
+.designate-suggest__rationale {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+}
+.designate-suggest__error {
+  color: var(--status-caution);
+  font-size: var(--text-caption);
+  margin: 0;
+}
