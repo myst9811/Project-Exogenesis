@@ -3,7 +3,7 @@
  * @vitest-environment jsdom
  */
 
-import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { encodeConfigurationToken } from '../store';
@@ -67,5 +67,34 @@ describe('App', () => {
       expect(screen.getByRole('alert').textContent).toContain('default world');
     });
     expect(screen.getByText('Earth-like gravity')).toBeTruthy();
+  });
+
+  it('designates the current world from the header and shows the name in the HUD', async () => {
+    render(<App createRenderer={fakeRenderer} />);
+    await screen.findByText(/EXO-/);
+    fireEvent.click(screen.getByRole('button', { name: /designate world/i }));
+    fireEvent.change(await screen.findByLabelText(/common name/i), { target: { value: 'Aurelia' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Designate' }));
+    expect(await screen.findByText('Aurelia')).toBeTruthy();
+  });
+
+  it('opens the archive, then loads a designated world back', async () => {
+    render(<App createRenderer={fakeRenderer} />);
+    await screen.findByText(/EXO-/);
+    fireEvent.click(screen.getByRole('button', { name: /designate world/i }));
+    fireEvent.change(await screen.findByLabelText(/common name/i), { target: { value: 'Aurelia' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Designate' }));
+    await screen.findByText('Aurelia');
+    fireEvent.click(screen.getByRole('button', { name: /exploration archive/i }));
+    expect(await screen.findByLabelText(/exploration archive/i)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /load/i }));
+    expect(screen.queryByLabelText(/search archive/i)).toBeNull();
+  });
+
+  it('borrows a shared name from an inbound link for the session', async () => {
+    const token = encodeConfigurationToken(createEarthBaselineConfiguration());
+    window.history.replaceState(null, '', `#w=${token}&n=Zephyr`);
+    render(<App createRenderer={fakeRenderer} />);
+    expect(await screen.findByText('Zephyr')).toBeTruthy();
   });
 });

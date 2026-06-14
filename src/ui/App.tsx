@@ -13,12 +13,18 @@ import { useEffect, useState } from 'react';
 import type { JSX } from 'react';
 
 import {
+  type AppStores,
   commitConfiguration,
   createAppStores,
   createDefaultConfiguration,
+  designateCurrentWorld,
   encodeConfigurationToken,
   loadConfigurationToken,
+  resolveDisplayName,
 } from '../store';
+import type { SimulationDiagnostic } from '../types/configuration';
+import { ArchivePanel } from './ArchivePanel';
+import { DesignateWorldModal } from './DesignateWorldModal';
 import { DiagnosticsList } from './DiagnosticsList';
 import { InputPanels } from './InputPanels';
 import { MissionIcon } from './MissionIcon';
@@ -26,13 +32,19 @@ import { NarrationPanel } from './NarrationPanel';
 import { PlanetViewport, type PlanetRendererFactory } from './PlanetViewport';
 import { StoresProvider } from './StoresProvider';
 import { SystemHeader } from './SystemHeader';
+import { useStore } from './useStore';
 import { WorldReadouts } from './WorldReadouts';
-import { readWorldToken, writeWorldToken } from './worldUrl';
+import { readDisplayName, readWorldToken, writeDisplayName, writeWorldToken } from './worldUrl';
 
 export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory } = {}): JSX.Element {
   const [stores] = useState(createAppStores);
   const [linkError, setLinkError] = useState<string | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [designating, setDesignating] = useState(false);
+  const [designateDiagnostics, setDesignateDiagnostics] = useState<readonly SimulationDiagnostic[]>(
+    [],
+  );
+  const [archiveOpen, setArchiveOpen] = useState(false);
 
   // On mount: load a shared world from the URL, else seed the default.
   // `active.value` is read across awaits; a holder object avoids the flow
@@ -47,6 +59,11 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
           return;
         }
         if (diagnostics.length === 0) {
+          // Borrow the sharer's name for this session (never auto-archived).
+          const inboundName = readDisplayName();
+          if (inboundName !== null) {
+            stores.ui.setSessionDisplayName(inboundName);
+          }
           return;
         }
         setLinkError(diagnostics[0]?.message ?? 'The shared link could not be loaded.');
@@ -75,17 +92,29 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
           scanTimer = setTimeout(() => {
             setScanning(false);
           }, 800);
+          // A borrowed session name labels only the world it arrived with;
+          // moving to a different world drops it.
+          if (stores.archive.getState().entries[hash] === undefined) {
+            stores.ui.setSessionDisplayName(null);
+          }
         }
         previousHash = hash;
         if (state.configuration !== null) {
           writeWorldToken(encodeConfigurationToken(state.configuration));
+          const { commonName } = resolveDisplayName(stores.archive.getState(), hash);
+          const name = commonName ?? stores.ui.getState().sessionDisplayName;
+          if (name !== null) {
+            writeDisplayName(name);
+          }
         }
       }
     };
-    const unsubscribe = stores.simulation.subscribe(sync);
+    const unsubscribeSimulation = stores.simulation.subscribe(sync);
+    const unsubscribeArchive = stores.archive.subscribe(sync);
     sync();
     return () => {
-      unsubscribe();
+      unsubscribeSimulation();
+      unsubscribeArchive();
       clearTimeout(scanTimer);
     };
   }, [stores]);
@@ -96,7 +125,44 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
         <div className="scan-indicator" aria-hidden="true">
           <MissionIcon name="rocket" size={16} state="active" />
         </div>
-        <SystemHeader />
+        <SystemHeader
+          onDesignate={() => {
+            setDesignateDiagnostics([]);
+            setDesignating(true);
+          }}
+          onOpenArchive={() => {
+            setArchiveOpen(true);
+          }}
+        />
+        {designating && (
+          <DesignateModalContainer
+            stores={stores}
+            diagnostics={designateDiagnostics}
+            onConfirm={(name) => {
+              const diagnostics = designateCurrentWorld(stores, name);
+              if (diagnostics.length === 0) {
+                setDesignating(false);
+              } else {
+                setDesignateDiagnostics(diagnostics);
+              }
+            }}
+            onCancel={() => {
+              setDesignating(false);
+            }}
+          />
+        )}
+        {archiveOpen && (
+          <ArchivePanel
+            onClose={() => {
+              setArchiveOpen(false);
+            }}
+            onLoad={(entry) => {
+              stores.archive.setActive(entry.configurationHash);
+              void loadConfigurationToken(stores, entry.shareToken);
+              setArchiveOpen(false);
+            }}
+          />
+        )}
         {linkError !== null && (
           <p className="link-error" role="alert">
             {linkError} Showing the default world instead.
@@ -122,5 +188,47 @@ export function App({ createRenderer }: { createRenderer?: PlanetRendererFactory
         </main>
       </div>
     </StoresProvider>
+  );
+}
+
+const EARTH_SURFACE_GRAVITY = 9.806_65;
+
+/**
+ * Reads the live computed world and resolves the designate-modal props so the
+ * App shell stays lean. Renders nothing until a world exists.
+ */
+function DesignateModalContainer({
+  stores,
+  diagnostics,
+  onConfirm,
+  onCancel,
+}: {
+  stores: AppStores;
+  diagnostics: readonly SimulationDiagnostic[];
+  onConfirm: (name: string) => void;
+  onCancel: () => void;
+}): JSX.Element | null {
+  const sim = useStore(stores.simulation);
+  const archive = useStore(stores.archive);
+  const world = sim.planetaryState;
+  if (world === null) {
+    return null;
+  }
+  const designation = `EXO-${world.configurationHash.slice(0, 6).toUpperCase()}`;
+  const hzLabel =
+    world.habitableZone === null ? 'OUT OF RANGE' : world.habitableZone.position.toUpperCase();
+  return (
+    <DesignateWorldModal
+      designation={designation}
+      readouts={{
+        surfaceTemperatureKelvin: world.climate.surfaceTemperatureKelvin,
+        surfaceGravityEarthG: world.bulk.surfaceGravityMetersPerSecondSquared / EARTH_SURFACE_GRAVITY,
+        hzLabel,
+      }}
+      initialName={archive.entries[world.configurationHash]?.commonName ?? ''}
+      diagnostics={diagnostics}
+      onConfirm={onConfirm}
+      onCancel={onCancel}
+    />
   );
 }

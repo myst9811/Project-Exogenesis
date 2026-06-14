@@ -1156,3 +1156,189 @@ body {
   color: var(--text-secondary);
   font-size: var(--text-micro);
 }
+
+/* ── World identity (common name + designation) ── */
+.world-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.world-identity__name {
+  font-family: var(--font-display);
+  color: var(--cyan-bright);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-data);
+}
+.world-identity__designation {
+  font-family: var(--font-data);
+  color: var(--text-secondary);
+  font-size: var(--text-micro);
+}
+.world-identity--hud .world-identity__name {
+  font-size: var(--text-readout-size);
+}
+.world-identity--header .world-identity__name {
+  font-size: var(--text-data);
+}
+.world-identity--card .world-identity__name {
+  font-size: var(--text-data);
+}
+
+/* ── Modal shell ── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 3, 0.7);
+  z-index: 50;
+}
+.modal {
+  background: var(--void-panel);
+  border: 1px solid var(--border-active);
+  border-radius: 6px;
+  padding: 1.5rem;
+  min-width: 22rem;
+  max-width: 30rem;
+  box-shadow: 0 0 30px var(--cyan-glow);
+}
+.modal-eyebrow {
+  font-family: var(--font-data);
+  font-size: var(--text-micro);
+  letter-spacing: var(--tracking-tactical);
+  color: var(--text-secondary);
+  margin: 0;
+}
+.modal-title {
+  font-family: var(--font-display);
+  color: var(--cyan-bright);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-data);
+  margin: 0.2rem 0 1rem;
+}
+.designate-designation {
+  font-family: var(--font-data);
+  color: var(--text-readout);
+  margin: 0 0 0.5rem;
+}
+.designate-readouts {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+.designate-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+}
+.designate-field input {
+  background: var(--void-deep);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  color: var(--text-readout);
+  font-family: var(--font-data);
+  padding: 0.5rem;
+}
+.designate-error {
+  color: var(--status-critical);
+  font-size: var(--text-caption);
+  margin: 0.5rem 0 0;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+
+/* ── Archive card ── */
+.archive-card {
+  list-style: none;
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 0.8rem;
+  background: var(--void-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.archive-card.is-active {
+  border-color: var(--border-active);
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+.archive-card__readouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  font-family: var(--font-data);
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+}
+.archive-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.tactical-btn.danger {
+  border-color: var(--status-critical);
+  color: var(--status-critical);
+}
+
+/* ── Archive panel ── */
+.archive-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(28rem, 90vw);
+  background: var(--void-panel);
+  border-left: 1px solid var(--border-active);
+  padding: 1.2rem;
+  overflow-y: auto;
+  /* Above the sticky system header (z-index 50) so its title is not clipped. */
+  z-index: 60;
+  box-shadow: -10px 0 30px rgba(0, 0, 3, 0.5);
+}
+.archive-panel__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  position: relative;
+}
+.archive-panel__header .tactical-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.archive-panel__controls {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.archive-panel__controls input {
+  flex: 1;
+  background: var(--void-deep);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  color: var(--text-readout);
+  padding: 0.4rem;
+}
+.archive-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.archive-panel__empty {
+  color: var(--text-secondary);
+  font-size: var(--text-caption);
+}

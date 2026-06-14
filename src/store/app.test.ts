@@ -9,6 +9,7 @@ import {
   type AppStores,
   commitConfiguration,
   createAppStores,
+  designateCurrentWorld,
   redoConfiguration,
   undoConfiguration,
 } from './app';
@@ -63,5 +64,26 @@ describe('undoConfiguration / redoConfiguration', () => {
     await expect(undoConfiguration(stores)).resolves.toBeUndefined();
     await expect(redoConfiguration(stores)).resolves.toBeUndefined();
     expect(stores.simulation.getState().status).toBe('idle');
+  });
+});
+
+describe('designateCurrentWorld', () => {
+  it('saves the active world to the archive with a catalog snapshot', async () => {
+    const stores = createAppStores();
+    await commitConfiguration(stores, createEarthBaselineConfiguration());
+    const hash = stores.simulation.getState().planetaryState?.configurationHash ?? '';
+    const diagnostics = designateCurrentWorld(stores, 'Aurelia');
+    expect(diagnostics).toEqual([]);
+    const entry = stores.archive.getState().entries[hash];
+    expect(entry?.commonName).toBe('Aurelia');
+    expect(entry?.catalogSnapshot.spectralClass).toBeDefined();
+    expect(entry?.shareToken.length).toBeGreaterThan(0);
+  });
+
+  it('returns a diagnostic and saves nothing when no world is computed', () => {
+    const stores = createAppStores();
+    const diagnostics = designateCurrentWorld(stores, 'Aurelia');
+    expect(diagnostics.length).toBe(1);
+    expect(Object.keys(stores.archive.getState().entries).length).toBe(0);
   });
 });

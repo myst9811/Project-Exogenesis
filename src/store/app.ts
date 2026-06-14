@@ -14,24 +14,66 @@
  */
 
 import type { PlanetConfiguration, SimulationDiagnostic } from '../types/configuration';
+import type { CatalogSnapshot } from '../types/archive';
 import { decodeConfiguration, encodeConfiguration } from '../physics/configuration/url';
+import { createArchiveStore, type ArchiveStore } from './archive';
+import { loadArchive, saveArchive, type KeyValueStore } from './archivePersistence';
 import { createHistoryStore, type HistoryStore } from './history';
 import { createSimulationStore, type SimulationStore } from './simulation';
 import { createUIStore, type UIStore } from './ui';
+
+/** Standard gravity (m/s²) for converting surface gravity to Earth-g. NIST CODATA. */
+const EARTH_SURFACE_GRAVITY = 9.806_65;
 
 /** The bundle of stores backing one running application. */
 export interface AppStores {
   simulation: SimulationStore;
   ui: UIStore;
   history: HistoryStore<PlanetConfiguration>;
+  archive: ArchiveStore;
 }
 
-/** Creates a fresh, unseeded set of application stores. */
-export function createAppStores(): AppStores {
+/**
+ * Resolves a key/value store for archive persistence: the browser's
+ * `localStorage` when available, else an in-memory fallback (jsdom/node).
+ */
+function browserStorage(): KeyValueStore {
+  try {
+    if (
+      typeof localStorage !== 'undefined' &&
+      typeof localStorage.getItem === 'function' &&
+      typeof localStorage.setItem === 'function'
+    ) {
+      return localStorage;
+    }
+  } catch {
+    // Access can throw in sandboxed contexts; fall through to memory.
+  }
+  const map = new Map<string, string>();
+  return {
+    getItem: (k) => map.get(k) ?? null,
+    setItem: (k, v) => {
+      map.set(k, v);
+    },
+  };
+}
+
+/**
+ * Creates a fresh set of application stores. The archive is hydrated from
+ * browser storage and writes through on every change.
+ *
+ * @param storage - Key/value store for archive persistence (defaults to localStorage)
+ * @returns The application stores
+ */
+export function createAppStores(storage: KeyValueStore = browserStorage()): AppStores {
+  const archive = createArchiveStore(loadArchive(storage), (state) => {
+    saveArchive(storage, state);
+  });
   return {
     simulation: createSimulationStore(),
     ui: createUIStore(),
     history: createHistoryStore<PlanetConfiguration>(),
+    archive,
   };
 }
 
@@ -103,4 +145,50 @@ export async function loadConfigurationToken(
  */
 export function encodeConfigurationToken(configuration: PlanetConfiguration): string {
   return encodeConfiguration(configuration);
+}
+
+/**
+ * Designates (saves) the currently computed world to the archive under a
+ * user-chosen common name. Reads the live `PlanetaryState` and habitability
+ * to build a catalog snapshot and re-encodes the configuration to a share
+ * token. Returns diagnostics: empty on success, or the reason it could not
+ * be saved (no computed world, or an invalid name).
+ *
+ * @param stores - The application stores
+ * @param commonName - The user-chosen common name
+ * @returns Save diagnostics ([] on success)
+ */
+export function designateCurrentWorld(
+  stores: AppStores,
+  commonName: string,
+): readonly SimulationDiagnostic[] {
+  const sim = stores.simulation.getState();
+  const world = sim.planetaryState;
+  const configuration = sim.configuration;
+  const survival = sim.habitability?.survival[0] ?? null;
+  if (world === null || configuration === null || survival === null) {
+    return [
+      {
+        severity: 'error',
+        parameter: 'archive.world',
+        message: 'Compute a world before designating it.',
+        explanation: 'Only a successfully computed world can be saved to the archive.',
+      },
+    ];
+  }
+  const catalogSnapshot: CatalogSnapshot = {
+    spectralClass: configuration.stellar.spectralClass,
+    semiMajorAxisAu: configuration.orbital.semiMajorAxisAstronomicalUnits,
+    surfaceTemperatureKelvin: world.climate.surfaceTemperatureKelvin,
+    surfaceGravityEarthG: world.bulk.surfaceGravityMetersPerSecondSquared / EARTH_SURFACE_GRAVITY,
+    survivabilityScore: survival.survivabilityScore,
+    habitableZonePosition: world.habitableZone?.position ?? 'unknown',
+    limitingFactor: survival.limitingFactor,
+  };
+  return stores.archive.designate({
+    configurationHash: world.configurationHash,
+    commonName,
+    shareToken: encodeConfiguration(configuration),
+    catalogSnapshot,
+  });
 }

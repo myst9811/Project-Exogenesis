@@ -12,8 +12,10 @@ import { useEffect, useRef, useState } from 'react';
 import type { JSX } from 'react';
 
 import type { HabitableZonePosition } from '../types/physics';
+import { resolveDisplayName } from '../store';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
+import { WorldIdentity } from './WorldIdentity';
 
 const HZ_LABEL: Record<HabitableZonePosition, string> = {
   'too-hot': 'INTERIOR · HOT',
@@ -25,8 +27,10 @@ const HZ_LABEL: Record<HabitableZonePosition, string> = {
 const UPDATE_PULSE_MS = 2000;
 
 export function ViewportHud(): JSX.Element | null {
-  const { simulation } = useStores();
+  const { simulation, archive, ui } = useStores();
   const world = useStore(simulation).planetaryState;
+  const archiveState = useStore(archive);
+  const sessionDisplayName = useStore(ui).sessionDisplayName;
   const [updated, setUpdated] = useState(false);
   const previousHash = useRef<string | null>(null);
 
@@ -53,7 +57,10 @@ export function ViewportHud(): JSX.Element | null {
     return null;
   }
 
-  const designation = `EXO-${world.configurationHash.slice(0, 6).toUpperCase()}`;
+  const resolved = resolveDisplayName(archiveState, world.configurationHash);
+  const { designation } = resolved;
+  // A borrowed name from a shared link shows session-only until archived.
+  const commonName = resolved.commonName ?? sessionDisplayName;
   const spectralClass = world.configuration.stellar.spectralClass;
   const orbitAu = world.configuration.orbital.semiMajorAxisAstronomicalUnits;
   const hzLabel =
@@ -62,8 +69,9 @@ export function ViewportHud(): JSX.Element | null {
   return (
     <div className="viewport-hud" aria-hidden="true">
       <div className="hud-corner hud-top-left">
-        <span className="hud-key">DESIGNATION</span>
-        <span className="hud-value">{designation}</span>
+        {designation !== null && (
+          <WorldIdentity designation={designation} commonName={commonName} size="hud" />
+        )}
       </div>
       <div className="hud-corner hud-top-right">
         <span className="hud-line">STAR · {spectralClass}-TYPE</span>
