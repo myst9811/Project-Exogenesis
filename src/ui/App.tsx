@@ -23,8 +23,12 @@ import {
   resolveDisplayName,
 } from '../store';
 import type { SimulationDiagnostic } from '../types/configuration';
-import { type NameSuggestion, type NarrationClient, suggestPlanetNames } from '../ai';
-import { createGeminiClientFromEnv } from '../ai/providers/gemini';
+import {
+  type NameSuggestion,
+  type NarrationClient,
+  createNarrationClientFromEnv,
+  suggestPlanetNames,
+} from '../ai';
 import { ArchivePanel } from './ArchivePanel';
 import { DesignateWorldModal } from './DesignateWorldModal';
 import { DiagnosticsList } from './DiagnosticsList';
@@ -212,7 +216,7 @@ function DesignateModalContainer({
 }): JSX.Element | null {
   const sim = useStore(stores.simulation);
   const archive = useStore(stores.archive);
-  const [nameClient] = useState<NarrationClient | null>(() => createGeminiClientFromEnv());
+  const [nameClient] = useState<NarrationClient | null>(() => createNarrationClientFromEnv());
   const [suggestions, setSuggestions] = useState<readonly NameSuggestion[]>([]);
   const [suggestStatus, setSuggestStatus] = useState<'idle' | 'generating' | 'error'>('idle');
   const world = sim.planetaryState;

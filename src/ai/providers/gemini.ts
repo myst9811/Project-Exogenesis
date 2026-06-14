@@ -48,18 +48,3 @@ export function createGeminiClient(options: GeminiClientOptions): NarrationClien
     },
   };
 }
-
-/**
- * Builds a Gemini client from the build-time environment, or returns `null`
- * when no key is configured — letting the UI disable narration gracefully
- * rather than fail. The key is read from `VITE_GOOGLE_AI_API_KEY`.
- *
- * @returns A narration client, or `null` if no API key is set
- */
-export function createGeminiClientFromEnv(): NarrationClient | null {
-  const apiKey = import.meta.env.VITE_GOOGLE_AI_API_KEY;
-  if (apiKey === undefined || apiKey === '') {
-    return null;
-  }
-  return createGeminiClient({ apiKey });
-}
