@@ -6,13 +6,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && tsc --noEmit -p api/tsconfig.json && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --max-warnings 0",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc --noEmit -p api/tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,11 @@
   "devDependencies": {
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.2",
+    "@types/node": "25.9.3",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "@types/three": "0.184.1",
+    "@vercel/node": "5.8.17",
     "@vitejs/plugin-react": "6.0.2",
     "@vitest/coverage-v8": "4.1.8",
     "eslint": "10.4.1",
