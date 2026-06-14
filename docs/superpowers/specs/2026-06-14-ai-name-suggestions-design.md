@@ -150,3 +150,9 @@ Each step: `npm run test && npm run lint && npm run typecheck && npm run build` 
 - Phase 3 (public catalog / backend) — separate spec, needs its own ADR.
 - Any change to the archive store, persistence, sharing, or the physics/render layers.
 - New AI providers or changes to `NarrationClient`.
+
+---
+
+## Status: Implemented (2026-06-14)
+
+Shipped: the `NameSuggestion` type, the pure `parseNameSuggestions` trust-boundary parser (100%), the `suggestPlanetNames` capability with the versioned `planetName.v1` prompt, and the pick-to-fill suggestion UI in the Designate modal (hidden when no AI key). Names are cosmetic and pass `validateCommonName` before use; nothing saves without an explicit pick + confirm. No physics/render/store/persistence changes. Phase 3 (public catalog) remains a separate, later spec.
