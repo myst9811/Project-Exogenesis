@@ -3,14 +3,16 @@
  *
  * Modal for naming ("designating") the current world. Shows the immutable
  * designation and a few readouts so the user confirms which world they are
- * naming, then captures a cosmetic common name. Pure presentational: it owns
- * only the input's local text; validation diagnostics and the save action
- * come from the parent (CLAUDE.md §4).
+ * naming, then captures a cosmetic common name. Optionally offers AI name
+ * suggestions: picking one fills the input (the user may still edit). Pure
+ * presentational — it owns only the input text and calls handlers; the AI
+ * async and validation diagnostics come from the parent (CLAUDE.md §4).
  */
 
 import { useState } from 'react';
 import type { JSX } from 'react';
 
+import type { NameSuggestion } from '../types/ai';
 import type { SimulationDiagnostic } from '../types/configuration';
 
 export interface DesignateReadouts {
@@ -24,6 +26,9 @@ export function DesignateWorldModal({
   readouts,
   initialName,
   diagnostics,
+  suggestions = [],
+  suggestStatus = 'idle',
+  onRequestSuggestions,
   onConfirm,
   onCancel,
 }: {
@@ -31,6 +36,9 @@ export function DesignateWorldModal({
   readouts: DesignateReadouts;
   initialName: string;
   diagnostics: readonly SimulationDiagnostic[];
+  suggestions?: readonly NameSuggestion[];
+  suggestStatus?: 'idle' | 'generating' | 'error';
+  onRequestSuggestions?: () => void;
   onConfirm: (name: string) => void;
   onCancel: () => void;
 }): JSX.Element {
@@ -69,6 +77,48 @@ export function DesignateWorldModal({
             }}
           />
         </label>
+
+        {onRequestSuggestions !== undefined && (
+          <div className="designate-suggest">
+            <button
+              type="button"
+              className="tactical-btn"
+              disabled={suggestStatus === 'generating'}
+              onClick={onRequestSuggestions}
+            >
+              {suggestStatus === 'generating' ? 'Suggesting…' : '✦ Suggest names'}
+            </button>
+            {suggestStatus === 'error' && (
+              <p className="designate-suggest__error">
+                Couldn&rsquo;t fetch suggestions — type a name instead.
+              </p>
+            )}
+            {suggestions.length > 0 && (
+              <>
+                <p className="designate-suggest__header">PROVISIONAL DESIGNATIONS (SUGGESTED)</p>
+                <ul className="designate-suggest__list">
+                  {suggestions.map((suggestion) => (
+                    <li key={suggestion.name}>
+                      <button
+                        type="button"
+                        className="designate-suggest__item"
+                        onClick={() => {
+                          setName(suggestion.name);
+                        }}
+                      >
+                        <span className="designate-suggest__name">{suggestion.name}</span>
+                        {suggestion.rationale.length > 0 && (
+                          <span className="designate-suggest__rationale">{suggestion.rationale}</span>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+
         {diagnostics.map((diagnostic) => (
           <p key={diagnostic.parameter + diagnostic.message} className="designate-error" role="alert">
             {diagnostic.message}
