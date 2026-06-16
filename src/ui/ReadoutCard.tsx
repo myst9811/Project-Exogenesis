@@ -14,6 +14,8 @@
 import type { JSX, ReactNode } from 'react';
 
 import type { HumanTranslation } from '../translation';
+import { Tooltip } from './Tooltip';
+import type { ParameterTooltip } from './tooltips/types';
 
 export type ReadoutTone = 'nominal' | 'caution' | 'critical' | 'accent';
 
@@ -24,6 +26,7 @@ export function ReadoutCard({
   tone,
   rawValue,
   instrument,
+  tooltip,
 }: {
   label: string;
   /** Full felt-experience translation (physics readouts). */
@@ -35,6 +38,8 @@ export function ReadoutCard({
   rawValue: string;
   /** Optional scientific-instrument visual (gauge, spectrum, bar). */
   instrument?: ReactNode;
+  /** Optional tooltip — definition only; sits outside the <h3> to preserve its accessible name. */
+  tooltip?: ParameterTooltip;
 }): JSX.Element {
   const briefText = translation?.brief ?? brief;
   const toneClass = tone === undefined ? '' : ` readout-tone-${tone}`;
@@ -42,12 +47,15 @@ export function ReadoutCard({
   return (
     <article className={`readout-card${toneClass}`}>
       <header className="readout-head">
-        <h3 className="readout-label">
-          <span aria-hidden="true" className="readout-glyph">
-            ◈
-          </span>
-          {label}
-        </h3>
+        <span className="readout-label-group">
+          <h3 className="readout-label">
+            <span aria-hidden="true" className="readout-glyph">
+              ◈
+            </span>
+            {label}
+          </h3>
+          {tooltip !== undefined && <Tooltip tooltip={tooltip} />}
+        </span>
         <p className="readout-raw" aria-label="raw value">
           {rawValue}
         </p>
