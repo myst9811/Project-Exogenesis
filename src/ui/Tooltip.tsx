@@ -23,7 +23,7 @@ export function Tooltip({ tooltip }: { tooltip: ParameterTooltip }): JSX.Element
       if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); };
   }, [open]);
 
   useEffect(() => {
