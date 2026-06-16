@@ -386,12 +386,16 @@ body {
 
 .tactical-panel {
   position: relative;
+  z-index: 1;
   background: var(--void-panel);
   border: 1px solid var(--border-dim);
   padding: 14px 16px 16px;
   margin-bottom: 14px;
   animation: panel-enter 0.4s ease-out both;
   animation-delay: calc(var(--panel-index, 0) * 80ms);
+}
+.tactical-panel:hover {
+  z-index: 10;
 }
 
 .tactical-panel::before,
