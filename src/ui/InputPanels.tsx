@@ -18,7 +18,6 @@ import {
 } from '../types/configuration';
 import type {
   AtmosphericGas,
-  PlanetCompositionClass,
   PlanetConfiguration,
 } from '../types/configuration';
 import { NumberField } from './NumberField';
@@ -28,6 +27,13 @@ import { Tooltip } from './Tooltip';
 import { PARAMETER_TOOLTIPS } from './tooltips/parameterTooltips';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
+
+const COMPOSITION_LABELS = {
+  'rocky-silicate': 'Rocky',
+  'iron-rich': 'Iron-rich',
+  'water-world': 'Water',
+  'gas-dwarf': 'Gas Dwarf',
+} as const;
 
 export function InputPanels(): JSX.Element | null {
   const stores = useStores();
@@ -131,30 +137,30 @@ export function InputPanels(): JSX.Element | null {
             apply({ ...config, planetary: { ...config.planetary, radiusEarthRadii } });
           }}
         />
-        <label className="select-field">
+        <div className="select-field">
           <span className="field-label">
             Composition
             <Tooltip tooltip={PARAMETER_TOOLTIPS.compositionClass} />
           </span>
-          <select
-            value={config.planetary.compositionClass}
-            onChange={(event) => {
-              apply({
-                ...config,
-                planetary: {
-                  ...config.planetary,
-                  compositionClass: event.target.value as PlanetCompositionClass,
-                },
-              });
-            }}
-          >
-            {PLANET_COMPOSITION_CLASSES.map((compositionClass) => (
-              <option key={compositionClass} value={compositionClass}>
-                {compositionClass}
-              </option>
+          <div className="segmented" role="radiogroup" aria-label="Composition">
+            {PLANET_COMPOSITION_CLASSES.map((cls) => (
+              <button
+                key={cls}
+                type="button"
+                role="radio"
+                aria-checked={cls === config.planetary.compositionClass}
+                className={`segmented-option${cls === config.planetary.compositionClass ? ' is-active' : ''}`}
+                onClick={() => {
+                  if (cls !== config.planetary.compositionClass) {
+                    apply({ ...config, planetary: { ...config.planetary, compositionClass: cls } });
+                  }
+                }}
+              >
+                {COMPOSITION_LABELS[cls]}
+              </button>
             ))}
-          </select>
-        </label>
+          </div>
+        </div>
       </TacticalPanel>
 
       <TacticalPanel index={3} eyebrow="Subsystem 04" title="Rotation">
