@@ -37,6 +37,18 @@ describe('WorldReadouts', () => {
     expect(screen.getByText('Earth-like year')).toBeTruthy();
   });
 
+  it('renders tooltip triggers for all output readouts', async () => {
+    const stores = createAppStores();
+    await commitConfiguration(stores, createDefaultConfiguration());
+    render(
+      <StoresProvider stores={stores}>
+        <WorldReadouts />
+      </StoresProvider>,
+    );
+    const triggers = screen.getAllByRole('button', { name: 'More information' });
+    expect(triggers.length).toBe(8);
+  });
+
   it('surfaces the computed habitability and atmosphere instruments for Earth', async () => {
     const stores = createAppStores();
     await commitConfiguration(stores, createDefaultConfiguration());

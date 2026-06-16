@@ -23,6 +23,7 @@ import { GravityGauge } from './GravityGauge';
 import { HabitabilityGauge, survivabilityTone } from './HabitabilityGauge';
 import { ReadoutCard } from './ReadoutCard';
 import { ThermalSpectrum } from './ThermalSpectrum';
+import { PARAMETER_TOOLTIPS } from './tooltips/parameterTooltips';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
 
@@ -61,6 +62,7 @@ export function WorldReadouts(): JSX.Element {
         label="Gravity"
         translation={translateGravity(world.bulk.surfaceGravityMetersPerSecondSquared)}
         rawValue={`${world.bulk.surfaceGravityMetersPerSecondSquared.toFixed(2)} m/s²`}
+        tooltip={PARAMETER_TOOLTIPS.gravity}
         instrument={
           <GravityGauge
             surfaceGravityMetersPerSecondSquared={world.bulk.surfaceGravityMetersPerSecondSquared}
@@ -71,6 +73,7 @@ export function WorldReadouts(): JSX.Element {
         label="Surface Temperature"
         translation={translateSurfaceTemperature(world.climate.surfaceTemperatureKelvin)}
         rawValue={`${Math.round(world.climate.surfaceTemperatureKelvin)} K | ${surfaceCelsius} °C`}
+        tooltip={PARAMETER_TOOLTIPS.surfaceTemperature}
         instrument={<ThermalSpectrum temperatureKelvin={world.climate.surfaceTemperatureKelvin} />}
       />
       {survival !== null && (
@@ -79,6 +82,7 @@ export function WorldReadouts(): JSX.Element {
           brief={SURVIVAL_BRIEF[survival.status]}
           tone={survivabilityTone(survival.survivabilityScore)}
           rawValue={`${Math.round(survival.survivabilityScore)} / 100`}
+          tooltip={PARAMETER_TOOLTIPS.habitability}
           instrument={
             <HabitabilityGauge
               score={survival.survivabilityScore}
@@ -91,12 +95,14 @@ export function WorldReadouts(): JSX.Element {
         label="Atmospheric Pressure"
         translation={translatePressure(world.atmosphere.surfacePressureKilopascals)}
         rawValue={`${world.atmosphere.surfacePressureKilopascals.toFixed(1)} kPa`}
+        tooltip={PARAMETER_TOOLTIPS.atmosphericPressure}
       />
       <ReadoutCard
         label="Atmosphere"
         brief="Composition by partial pressure."
         tone="accent"
         rawValue={`${world.atmosphere.surfacePressureKilopascals.toFixed(1)} kPa`}
+        tooltip={PARAMETER_TOOLTIPS.atmosphere}
         instrument={
           <AtmosphereBar
             partialPressuresKilopascals={world.configuration.atmosphere.partialPressuresKilopascals}
@@ -107,16 +113,19 @@ export function WorldReadouts(): JSX.Element {
         label="Escape Velocity"
         translation={translateEscapeVelocity(world.bulk.escapeVelocityMetersPerSecond)}
         rawValue={`${(world.bulk.escapeVelocityMetersPerSecond / 1000).toFixed(1)} km/s`}
+        tooltip={PARAMETER_TOOLTIPS.escapeVelocity}
       />
       <ReadoutCard
         label="Day Length"
         translation={translateDayLength(rotationHours * SECONDS_PER_HOUR)}
         rawValue={`${rotationHours.toFixed(1)} h`}
+        tooltip={PARAMETER_TOOLTIPS.dayLength}
       />
       <ReadoutCard
         label="Year Length"
         translation={translateOrbitalPeriod(world.orbit.orbitalPeriodSeconds)}
         rawValue={`${(world.orbit.orbitalPeriodSeconds / SECONDS_PER_DAY).toFixed(0)} days`}
+        tooltip={PARAMETER_TOOLTIPS.yearLength}
       />
     </section>
   );

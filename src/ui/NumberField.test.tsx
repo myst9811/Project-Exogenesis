@@ -7,6 +7,12 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { NumberField } from './NumberField';
+import type { ParameterTooltip } from './tooltips/types';
+
+const MOCK_TOOLTIP: ParameterTooltip = {
+  title: 'Test',
+  definition: 'A test definition.',
+};
 
 afterEach(cleanup);
 
@@ -72,5 +78,15 @@ describe('NumberField', () => {
     render(<NumberField label="Mass" value={0} min={0} step={0.1} onCommit={onCommit} />);
     fireEvent.click(screen.getByRole('button', { name: 'Decrease Mass' }));
     expect(onCommit).not.toHaveBeenCalled();
+  });
+
+  it('renders a tooltip trigger when the tooltip prop is provided', () => {
+    render(<NumberField label="Mass" value={1} onCommit={vi.fn()} tooltip={MOCK_TOOLTIP} />);
+    expect(screen.getByRole('button', { name: 'More information' })).toBeTruthy();
+  });
+
+  it('does not render a tooltip trigger when the tooltip prop is omitted', () => {
+    render(<NumberField label="Mass" value={1} onCommit={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: 'More information' })).toBeNull();
   });
 });

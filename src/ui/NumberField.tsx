@@ -14,6 +14,9 @@
 import { useEffect, useState } from 'react';
 import type { JSX } from 'react';
 
+import { Tooltip } from './Tooltip';
+import type { ParameterTooltip } from './tooltips/types';
+
 /** Decimal places implied by a step, so nudging avoids float noise. */
 function decimalsOf(step: number): number {
   const fraction = String(step).split('.')[1];
@@ -27,6 +30,7 @@ export function NumberField({
   min,
   max,
   step,
+  tooltip,
   onCommit,
 }: {
   label: string;
@@ -35,6 +39,7 @@ export function NumberField({
   min?: number;
   max?: number;
   step?: number;
+  tooltip?: ParameterTooltip;
   onCommit: (value: number) => void;
 }): JSX.Element {
   const [draft, setDraft] = useState(String(value));
@@ -67,7 +72,10 @@ export function NumberField({
 
   return (
     <div className="tactical-field">
-      <span className="field-label">{fullLabel}</span>
+      <span className="field-label">
+        {fullLabel}
+        {tooltip !== undefined && <Tooltip tooltip={tooltip} />}
+      </span>
       <div className="field-input-group">
         <button
           type="button"

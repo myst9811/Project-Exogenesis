@@ -60,6 +60,17 @@ describe('InputPanels', () => {
     expect(stores.history.canUndo()).toBe(true);
   });
 
+  it('renders tooltip triggers for all input parameters', async () => {
+    const stores = await seededStores();
+    render(
+      <StoresProvider stores={stores}>
+        <InputPanels />
+      </StoresProvider>,
+    );
+    const triggers = screen.getAllByRole('button', { name: 'More information' });
+    expect(triggers.length).toBe(18);
+  });
+
   it('changes the spectral class through the segmented control', async () => {
     const stores = await seededStores();
     render(

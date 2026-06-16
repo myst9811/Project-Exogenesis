@@ -18,14 +18,22 @@ import {
 } from '../types/configuration';
 import type {
   AtmosphericGas,
-  PlanetCompositionClass,
   PlanetConfiguration,
 } from '../types/configuration';
 import { NumberField } from './NumberField';
 import { SpectralClassSelector } from './SpectralClassSelector';
 import { TacticalPanel } from './TacticalPanel';
+import { Tooltip } from './Tooltip';
+import { PARAMETER_TOOLTIPS } from './tooltips/parameterTooltips';
 import { useStore } from './useStore';
 import { useStores } from './StoresProvider';
+
+const COMPOSITION_LABELS = {
+  'rocky-silicate': 'Rocky',
+  'iron-rich': 'Iron-rich',
+  'water-world': 'Water',
+  'gas-dwarf': 'Gas Dwarf',
+} as const;
 
 export function InputPanels(): JSX.Element | null {
   const stores = useStores();
@@ -44,7 +52,10 @@ export function InputPanels(): JSX.Element | null {
     <form className="input-panels" aria-label="world parameters">
       <TacticalPanel index={0} eyebrow="Subsystem 01" title="Stellar Data">
         <label className="select-field">
-          <span className="field-label">Spectral class</span>
+          <span className="field-label">
+            Spectral class
+            <Tooltip tooltip={PARAMETER_TOOLTIPS.spectralClass} />
+          </span>
           <SpectralClassSelector
             value={config.stellar.spectralClass}
             options={SPECTRAL_CLASSES}
@@ -60,6 +71,7 @@ export function InputPanels(): JSX.Element | null {
           min={0.075}
           max={150}
           step={0.1}
+          tooltip={PARAMETER_TOOLTIPS.stellarMass}
           onCommit={(massSolarMasses) => {
             apply({ ...config, stellar: { ...config.stellar, massSolarMasses } });
           }}
@@ -70,6 +82,7 @@ export function InputPanels(): JSX.Element | null {
           value={config.stellar.ageGigayears}
           min={0}
           step={0.1}
+          tooltip={PARAMETER_TOOLTIPS.stellarAge}
           onCommit={(ageGigayears) => {
             apply({ ...config, stellar: { ...config.stellar, ageGigayears } });
           }}
@@ -83,6 +96,7 @@ export function InputPanels(): JSX.Element | null {
           value={config.orbital.semiMajorAxisAstronomicalUnits}
           min={0}
           step={0.01}
+          tooltip={PARAMETER_TOOLTIPS.semiMajorAxis}
           onCommit={(semiMajorAxisAstronomicalUnits) => {
             apply({ ...config, orbital: { ...config.orbital, semiMajorAxisAstronomicalUnits } });
           }}
@@ -93,6 +107,7 @@ export function InputPanels(): JSX.Element | null {
           min={0}
           max={0.99}
           step={0.01}
+          tooltip={PARAMETER_TOOLTIPS.eccentricity}
           onCommit={(eccentricity) => {
             apply({ ...config, orbital: { ...config.orbital, eccentricity } });
           }}
@@ -106,6 +121,7 @@ export function InputPanels(): JSX.Element | null {
           value={config.planetary.massEarthMasses}
           min={0}
           step={0.1}
+          tooltip={PARAMETER_TOOLTIPS.planetMass}
           onCommit={(massEarthMasses) => {
             apply({ ...config, planetary: { ...config.planetary, massEarthMasses } });
           }}
@@ -116,31 +132,35 @@ export function InputPanels(): JSX.Element | null {
           value={config.planetary.radiusEarthRadii}
           min={0}
           step={0.1}
+          tooltip={PARAMETER_TOOLTIPS.planetRadius}
           onCommit={(radiusEarthRadii) => {
             apply({ ...config, planetary: { ...config.planetary, radiusEarthRadii } });
           }}
         />
-        <label className="select-field">
-          <span className="field-label">Composition</span>
-          <select
-            value={config.planetary.compositionClass}
-            onChange={(event) => {
-              apply({
-                ...config,
-                planetary: {
-                  ...config.planetary,
-                  compositionClass: event.target.value as PlanetCompositionClass,
-                },
-              });
-            }}
-          >
-            {PLANET_COMPOSITION_CLASSES.map((compositionClass) => (
-              <option key={compositionClass} value={compositionClass}>
-                {compositionClass}
-              </option>
+        <div className="select-field">
+          <span className="field-label">
+            Composition
+            <Tooltip tooltip={PARAMETER_TOOLTIPS.compositionClass} />
+          </span>
+          <div className="segmented" role="radiogroup" aria-label="Composition">
+            {PLANET_COMPOSITION_CLASSES.map((cls) => (
+              <button
+                key={cls}
+                type="button"
+                role="radio"
+                aria-checked={cls === config.planetary.compositionClass}
+                className={`segmented-option${cls === config.planetary.compositionClass ? ' is-active' : ''}`}
+                onClick={() => {
+                  if (cls !== config.planetary.compositionClass) {
+                    apply({ ...config, planetary: { ...config.planetary, compositionClass: cls } });
+                  }
+                }}
+              >
+                {COMPOSITION_LABELS[cls]}
+              </button>
             ))}
-          </select>
-        </label>
+          </div>
+        </div>
       </TacticalPanel>
 
       <TacticalPanel index={3} eyebrow="Subsystem 04" title="Rotation">
@@ -149,6 +169,7 @@ export function InputPanels(): JSX.Element | null {
           unit="h"
           value={config.rotation.rotationPeriodHours}
           step={1}
+          tooltip={PARAMETER_TOOLTIPS.rotationPeriod}
           onCommit={(rotationPeriodHours) => {
             apply({ ...config, rotation: { ...config.rotation, rotationPeriodHours } });
           }}
@@ -160,6 +181,7 @@ export function InputPanels(): JSX.Element | null {
           min={0}
           max={180}
           step={1}
+          tooltip={PARAMETER_TOOLTIPS.axialTilt}
           onCommit={(axialTiltDegrees) => {
             apply({ ...config, rotation: { ...config.rotation, axialTiltDegrees } });
           }}
@@ -168,27 +190,40 @@ export function InputPanels(): JSX.Element | null {
 
       <TacticalPanel index={4} eyebrow="Subsystem 05" title="Atmospheric Composition">
         <p className="panel-note">Partial pressures · kPa</p>
-        {ATMOSPHERIC_GASES.map((gas: AtmosphericGas) => (
-          <NumberField
-            key={gas}
-            label={gas}
-            unit="kPa"
-            value={config.atmosphere.partialPressuresKilopascals[gas] ?? 0}
-            min={0}
-            step={0.5}
-            onCommit={(pressure) => {
-              apply({
-                ...config,
-                atmosphere: {
-                  partialPressuresKilopascals: {
-                    ...config.atmosphere.partialPressuresKilopascals,
-                    [gas]: pressure,
+        {ATMOSPHERIC_GASES.map((gas: AtmosphericGas) => {
+          const gasTooltipKey = {
+            N2: 'pressureN2',
+            O2: 'pressureO2',
+            CO2: 'pressureCO2',
+            H2O: 'pressureH2O',
+            CH4: 'pressureCH4',
+            Ar: 'pressureAr',
+            He: 'pressureHe',
+            H2: 'pressureH2',
+          } as const;
+          return (
+            <NumberField
+              key={gas}
+              label={gas}
+              unit="kPa"
+              value={config.atmosphere.partialPressuresKilopascals[gas] ?? 0}
+              min={0}
+              step={0.5}
+              tooltip={PARAMETER_TOOLTIPS[gasTooltipKey[gas]]}
+              onCommit={(pressure) => {
+                apply({
+                  ...config,
+                  atmosphere: {
+                    partialPressuresKilopascals: {
+                      ...config.atmosphere.partialPressuresKilopascals,
+                      [gas]: pressure,
+                    },
                   },
-                },
-              });
-            }}
-          />
-        ))}
+                });
+              }}
+            />
+          );
+        })}
       </TacticalPanel>
     </form>
   );
