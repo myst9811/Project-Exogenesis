@@ -1465,6 +1465,16 @@ body {
   transform: rotate(45deg);
 }
 
+.tooltip-card--above {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+.tooltip-card--above::before {
+  top: auto;
+  bottom: -5px;
+  transform: rotate(225deg);
+}
+
 .tooltip-title {
   margin: 0 0 6px;
   font-family: var(--font-display);

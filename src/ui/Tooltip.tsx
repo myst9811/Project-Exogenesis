@@ -28,10 +28,14 @@ export function Tooltip({ tooltip }: { tooltip: ParameterTooltip }): JSX.Element
 
   useEffect(() => {
     if (!open || cardRef.current === null) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    const card = cardRef.current;
+    const rect = card.getBoundingClientRect();
     if (rect.right > window.innerWidth - 8) {
-      cardRef.current.style.left = 'auto';
-      cardRef.current.style.right = '0';
+      card.style.left = 'auto';
+      card.style.right = '0';
+    }
+    if (rect.bottom > window.innerHeight - 8) {
+      card.classList.add('tooltip-card--above');
     }
   }, [open]);
 
